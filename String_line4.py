@@ -489,402 +489,7 @@ class StringGUI(QtWidgets.QWidget):
         spacing = 12   #32
 
 
-        # --- Camera before Tab ---
-        tab_cam = QtWidgets.QWidget()
-        tabs.addTab(tab_cam, "Камера до спекания")
-        hctrl = QtWidgets.QHBoxLayout(tab_cam)
-        hctrl.setSpacing(spacing)
-        hctrl.setContentsMargins(25, 25, 25, 25)
-
-        # Parameters
-        grp_cam = QtWidgets.QGroupBox("Камера")
-        hctrl.addWidget(grp_cam)
-        vcam1 = QtWidgets.QVBoxLayout(grp_cam)
-        vcam1.setSpacing(spacing)
-
         
-
-        
-
-        
-
-        hcam = QtWidgets.QHBoxLayout()
-        hcam.setAlignment(Qt.AlignCenter)
-
-        """self.lbl_img = QtWidgets.QLabel()
-        self.lbl_img.setFixedSize(CAM_W_disp, CAM_H_disp )
-        self.lbl_img.setStyleSheet("background:#000;border:2px solid #444;")
-        self.lbl_img.setAlignment(Qt.AlignLeft)"""
-
-        self.lbl_img_before = QtWidgets.QLabel()
-        self.lbl_img_before.setFixedSize(CAM_W_disp, CAM_H_disp )
-        self.lbl_img_before.setStyleSheet("background:#000;border:2px solid #444;")
-        self.lbl_img_before.setAlignment(Qt.AlignLeft)
-
-        self.lbl_dia = QtWidgets.QLabel("")
-        self.lbl_dia.setAlignment(Qt.AlignCenter)
-
-        self.lbl_state = QtWidgets.QLabel("_____________Состояние\n")
-        self.lbl_state.setAlignment(Qt.AlignRight)
-
-        #hcam.addWidget(self.lbl_img)
-        hcam.addWidget(self.lbl_img_before)
-
-        #self._add_slider(vcam1, "Порог", "ед", 1, 250, 140,  lambda v: self._bin_lvl(v))
-        self._add_slider(vcam1, "Экспозиция", "ед", -15,-2, -5,  lambda v: self.set_expo(v,0))
-        #vcam1.addWidget(self._toggle_button("Освещение контроля", "M579 I5 S{}"))
-
-        vcam1.addWidget(self.lbl_dia)
-        #hcam.addWidget(self.lbl_state)
-
-        vcam1.addLayout(hcam)
-
-        grp_cam_ctrl = QtWidgets.QGroupBox("Перемещения")
-        hctrl.addWidget(grp_cam_ctrl)
-        vcam2 = QtWidgets.QVBoxLayout(grp_cam_ctrl)
-        vcam2.setSpacing(spacing)
-
-        vcam2.setAlignment(Qt.AlignCenter)
-
-        self.lbl_state3 = QtWidgets.QLabel("_____________Состояние\n")
-        self.lbl_state3.setAlignment(Qt.AlignRight)
-
-        self.slab_mirror_h_d = self._add_slider_na(vcam2, "Гориз", "mm", -20, 20, 0,         lambda v: self.set_pos_betw_string_microscope_d(float(v)),0.3)
-        self.slab_camera_h_d = self._add_slider_na(vcam2, "Верт", "mm", -100, 100, 0,         lambda v: self.set_pos_depth_microscope_d(float(v)),0.1)
-        self.but_home_microsc_d = self._toggle_button_common_a(vcam2,"Дом",   lambda v:self.home_microscope_d(v))
-        vcam2.addWidget(self._toggle_button_common("Позиция нити 1",   lambda v: self.pose_1_microscope_d(v)))
-        vcam2.addWidget(self._toggle_button_common("Позиция нити 2",   lambda v: self.pose_2_microscope_d(v)))
-        vcam2.addWidget(self._toggle_button_common("Позиция нити 3",   lambda v: self.pose_3_microscope_d(v)))
-
-        if not MAKET:
-            vcam2.addWidget(self._toggle_button_common("Позиция нити 4",   lambda v: self.pose_4_microscope_d(v)))
-            vcam2.addWidget(self._toggle_button_common("Позиция нити 5",   lambda v: self.pose_5_microscope_d(v)))
-        self.but_led_microsc_d = self._toggle_button_common_a(vcam2,"Освещение",   lambda v: self.light_microscope_d(v))
-
-
-        """self.but1_micr_bef = self._big_button("Камера 1", True)
-        self.but2_micr_bef = self._big_button("Камера 2", True)
-        self.but3_micr_bef = self._big_button("Камера 3", True)
-
-        self.buts_micr_bef:"list[QtWidgets.QPushButton]" = [self.but1_micr_bef,self.but2_micr_bef,self.but3_micr_bef]
-
-        self.but1_micr_bef.clicked.connect(lambda v: self.microscope_camera_set(v,0,0,self.but2_micr_bef,self.but3_micr_bef))
-        self.but2_micr_bef.clicked.connect(lambda v: self.microscope_camera_set(v,1,0,self.but1_micr_bef,self.but3_micr_bef))
-        self.but3_micr_bef.clicked.connect(lambda v: self.microscope_camera_set(v,2,0,self.but1_micr_bef,self.but2_micr_bef))
-
-        vcam2.addWidget(self.but1_micr_bef)
-        vcam2.addWidget(self.but2_micr_bef)
-        vcam2.addWidget(self.but3_micr_bef)"""
-
-        vcam2.addWidget(self.lbl_dia)
-
-
-        # --- Camera after Tab ---
-        tab_cam = QtWidgets.QWidget()
-        tabs.addTab(tab_cam, "Камера после спекания")
-        hctrl = QtWidgets.QHBoxLayout(tab_cam)
-        hctrl.setSpacing(spacing)
-        hctrl.setContentsMargins(25, 25, 25, 25)
-
-        # Parameters
-        grp_cam = QtWidgets.QGroupBox("Камера")
-        hctrl.addWidget(grp_cam)
-        vcam1 = QtWidgets.QVBoxLayout(grp_cam)
-        vcam1.setSpacing(spacing)
-
-        hcam = QtWidgets.QHBoxLayout()
-        hcam.setAlignment(Qt.AlignCenter)
-
-        self.lbl_img = QtWidgets.QLabel()
-        self.lbl_img.setFixedSize(CAM_W_disp, CAM_H_disp )
-        self.lbl_img.setStyleSheet("background:#000;border:2px solid #444;")
-        self.lbl_img.setAlignment(Qt.AlignLeft)
-
-        """self.lbl_img_before = QtWidgets.QLabel()
-        self.lbl_img_before.setFixedSize(CAM_W_disp, CAM_H_disp )
-        self.lbl_img_before.setStyleSheet("background:#000;border:2px solid #444;")
-        self.lbl_img_before.setAlignment(Qt.AlignLeft)"""
-
-        self.lbl_dia = QtWidgets.QLabel("")
-        self.lbl_dia.setAlignment(Qt.AlignCenter)
-
-        self.lbl_state = QtWidgets.QLabel("_____________Состояние\n")
-        self.lbl_state.setAlignment(Qt.AlignRight)
-
-        hcam.addWidget(self.lbl_img)
-        #hcam.addWidget(self.lbl_img_before)
-
-        #self._add_slider(vcam1, "Порог", "ед", 1, 250, 140,  lambda v: self._bin_lvl(v))
-        self._add_slider(vcam1, "Экспозиция", "ед", -15,-2, -5,  lambda v: self.set_expo(v,1))
-        #vcam1.addWidget(self._toggle_button("Освещение контроля", "M579 I5 S{}"))
-
-        vcam1.addWidget(self.lbl_dia)
-        #hcam.addWidget(self.lbl_state)
-
-        vcam1.addLayout(hcam)
-
-        grp_cam_ctrl = QtWidgets.QGroupBox("Перемещения")
-        hctrl.addWidget(grp_cam_ctrl)
-        vcam2 = QtWidgets.QVBoxLayout(grp_cam_ctrl)
-        vcam2.setSpacing(spacing)
-
-        vcam2.setAlignment(Qt.AlignCenter)
-
-        self.lbl_state3 = QtWidgets.QLabel("_____________Состояние\n")
-        self.lbl_state3.setAlignment(Qt.AlignRight)
-
-        self.slab_camera_h_e = self._add_slider_na(vcam2, "Гориз", "mm", -20, 20, 0,         lambda v: self.set_pos_betw_string_microscope_e(float(v)),0.3)
-        self.slab_mirror_h_e = self._add_slider_na(vcam2, "Верт", "mm", -100, 100, 0,         lambda v: self.set_pos_depth_microscope_e(float(v)),0.1)
-        self.but_home_microsc_e = self._toggle_button_common_a(vcam2,"Дом",   lambda v:self.home_microscope_e(v))
-        vcam2.addWidget(self._toggle_button_common("Позиция нити 1",   lambda v: self.pose_1_microscope_e(v)))
-        vcam2.addWidget(self._toggle_button_common("Позиция нити 2",   lambda v: self.pose_2_microscope_e(v)))
-        vcam2.addWidget(self._toggle_button_common("Позиция нити 3",   lambda v: self.pose_3_microscope_e(v)))
-
-        if not MAKET:
-            vcam2.addWidget(self._toggle_button_common("Позиция нити 4",   lambda v: self.pose_4_microscope_e(v)))
-            vcam2.addWidget(self._toggle_button_common("Позиция нити 5",   lambda v: self.pose_5_microscope_e(v)))
-
-        self.but_led_microsc_d = self._toggle_button_common_a(vcam2,"Освещение",   lambda v: self.light_microscope_e(v))
-        
-        """self.buts_micr_aft:"list[QtWidgets.QPushButton]" = [self._big_button("Камера 1", True),self._big_button("Камера 2", True),self._big_button("Камера 3", True)]
-
-        self.buts_micr_aft[0].clicked.connect(lambda v: self.microscope_camera_set(v,0,1,self.buts_micr_aft[1],self.buts_micr_aft[2]))
-        self.buts_micr_aft[1].clicked.connect(lambda v: self.microscope_camera_set(v,1,1,self.buts_micr_aft[0],self.buts_micr_aft[2]))
-        self.buts_micr_aft[2].clicked.connect(lambda v: self.microscope_camera_set(v,2,1,self.buts_micr_aft[0],self.buts_micr_aft[1]))
-
-        vcam2.addWidget(self.buts_micr_aft[0])
-        vcam2.addWidget(self.buts_micr_aft[1])
-        vcam2.addWidget(self.buts_micr_aft[2])"""
-        
-
-        vcam2.addWidget(self.lbl_dia)
-
-
-
-         # --- Pound Tab ---
-
-
-
-        tab_pound = QtWidgets.QWidget()
-        tabs.addTab(tab_pound, "Порошок")
-        hctrl = QtWidgets.QHBoxLayout(tab_pound)
-        hctrl.setSpacing(spacing)
-        hctrl.setContentsMargins(25, 25, 25, 25)
-
-        # Parameters
-        grp_cam = QtWidgets.QGroupBox("Камера")
-        hctrl.addWidget(grp_cam)
-        vcam1 = QtWidgets.QVBoxLayout(grp_cam)
-        vcam1.setSpacing(spacing)
-
-        hcam = QtWidgets.QHBoxLayout()
-        hcam.setAlignment(Qt.AlignCenter)
-
-        self.lbl_img_pound = QtWidgets.QLabel()
-        self.lbl_img_pound.setFixedSize(CAM_W_disp, CAM_H_disp )
-        self.lbl_img_pound.setStyleSheet("background:#000;border:2px solid #444;")
-        self.lbl_img_pound.setAlignment(Qt.AlignLeft)
-
-        """self.lbl_img_before = QtWidgets.QLabel()
-        self.lbl_img_before.setFixedSize(CAM_W_disp, CAM_H_disp )
-        self.lbl_img_before.setStyleSheet("background:#000;border:2px solid #444;")
-        self.lbl_img_before.setAlignment(Qt.AlignLeft)"""
-
-        self.lbl_dia = QtWidgets.QLabel("")
-        self.lbl_dia.setAlignment(Qt.AlignCenter)
-
-        self.lbl_state = QtWidgets.QLabel("_____________Состояние\n")
-        self.lbl_state.setAlignment(Qt.AlignRight)
-
-        hcam.addWidget(self.lbl_img_pound)
-        #hcam.addWidget(self.lbl_img_before)
-
-        #self._add_slider(vcam1, "Порог", "ед", 1, 250, 140,  lambda v: self._bin_lvl(v))
-        self._add_slider(vcam1, "Экспозиция", "ед", -15,-2, -5,  lambda v: self.set_expo(v,2))
-        #vcam1.addWidget(self._toggle_button("Освещение контроля", "M579 I5 S{}"))
-
-        vcam1.addWidget(self.lbl_dia)
-        #hcam.addWidget(self.lbl_state)
-
-        vcam1.addLayout(hcam)
-
-        grp_cam_ctrl = QtWidgets.QGroupBox("Перемещения")
-        hctrl.addWidget(grp_cam_ctrl)
-        vcam2 = QtWidgets.QVBoxLayout(grp_cam_ctrl)
-        vcam2.setSpacing(spacing)
-
-        vcam2.setAlignment(Qt.AlignCenter)
-
-        self.lbl_state3 = QtWidgets.QLabel("_____________Состояние\n")
-        self.lbl_state3.setAlignment(Qt.AlignRight)
-        """self.buts_pound:"list[QtWidgets.QPushButton]" = [self._big_button("Камера 1", True),self._big_button("Камера 2", True),self._big_button("Камера 3", True)]
-
-        self.buts_pound[0].clicked.connect(lambda v: self.microscope_camera_set(v,0,2,self.buts_pound[1],self.buts_pound[2]))
-        self.buts_pound[1].clicked.connect(lambda v: self.microscope_camera_set(v,1,2,self.buts_pound[0],self.buts_pound[2]))
-        self.buts_pound[2].clicked.connect(lambda v: self.microscope_camera_set(v,2,2,self.buts_pound[0],self.buts_pound[1]))
-
-        vcam2.addWidget(self.buts_pound[0])
-        vcam2.addWidget(self.buts_pound[1])
-        vcam2.addWidget(self.buts_pound[2])"""
-        
-
-        vcam2.addWidget(self.lbl_dia)
-#-------------------------------------------------------------------------
-
-
-        # --- Control Tab ---
-        tab_ctrl = QtWidgets.QWidget()
-        tabs.addTab(tab_ctrl, "Управление")
-        hctrl = QtWidgets.QHBoxLayout(tab_ctrl)
-        hctrl.setSpacing(spacing)
-        hctrl.setContentsMargins(25, 25, 25, 25)
-
-        # Parameters
-        grp_par = QtWidgets.QGroupBox("Параметры")
-        hctrl.addWidget(grp_par)    
-        vpar = QtWidgets.QVBoxLayout(grp_par)
-        vpar.setSpacing(spacing)
-
-        self.slab_temp = self._add_slider_na(vpar, "Температура", "°C", 20, 300, 130,         lambda v: self._send_gcode(StringMashType.primary, f"M579 T{v}"))#def com
-        #self.slab_hv = self._add_slider_na(vpar, "Напряжение", "kV", 0, 80, 0,             lambda v: self._send_gcode(StringMashType.primary,f"M577 V{v}"),100)
-        self.slab_press = self._add_slider_na(vpar, "Давление", "kPa", 0, 40, 10,             lambda v: self._send_gcode(StringMashType.primary,f"M578 S{int(v)}"),100)
-        self.slab_vel_tens = self._add_slider_na(vpar, "Скорость подачи нити", "мм/с", 1, 200, 10,lambda v: self._send_gcode(StringMashType.primary,f"M584 W E{round(v,3)}"),0.1)#recalc
-        self.slab_force_tens = self._add_slider_na(vpar, "Сила натяжения", "", 1, 100, 20,                lambda v: self.force_set(v))#recalc
-        self.slab_turbo = self._add_slider_na(vpar,"Мощность турбины", "", 0, 100, 0,  lambda v: self._send_gcode(StringMashType.secondary,f"M585  F{int(v)}"),40)
-        if not MAKET:
-            self.slab_dest = self._add_slider_na(vpar,"Длина нити", "", 0, 1000, 10,  lambda v: self._send_gcode(StringMashType.primary,f"M584 W H{round(1000*v,3)}"),0.1)
-
-
-        self.lbl_state_main =  QtWidgets.QLabel()
-        self.lbl_state_main.setAlignment(Qt.AlignTop)
-        self.lbl_state_main.setText('\n\n\n\nОбъём вверх\nОбъём вверх\nОбъём вверх\nОбъём вверх\nОбъём вверх\nОбъём вверх\nОбъём вверх\nОбъём вверх\n')
-        hctrl.addWidget(self.lbl_state_main)
-
-        self.lbl_state_sec =  QtWidgets.QLabel()
-        self.lbl_state_sec.setAlignment(Qt.AlignTop)
-        self.lbl_state_sec.setText('\n\n\n\nОбъём вниз\nОбъём вниз\nОбъём вниз\nОбъём вниз\n')
-        hctrl.addWidget(self.lbl_state_sec)
-        
-        vpar.addStretch()
-
-#--------------------------------------------------------------
-        # Actions
-        grp_act = QtWidgets.QGroupBox("Действия")
-        hctrl.addWidget(grp_act)
-        vact = QtWidgets.QVBoxLayout(grp_act)
-        vact.setSpacing(22)
-
-        # COM row
-        
-
-        # Toggle buttons and actions
-        self.but_temp_rele = self._toggle_button_common_a(vact,"Нагрев",lambda v: self._send_gcode(StringMashType.primary, f"M579 E{int(v)}"))
-        vact.addWidget(self._toggle_button_common("Каретка вверх", lambda v: self._karet_move_up(v)))        
-        vact.addWidget(self._toggle_button_common("Каретка вниз", lambda v: self._karet_move_down(v)))
-        self.but_recuperat = self._toggle_button_common_a(vact,"Рекуперация", lambda v: self._recuperator_move(v))
-
-        #
-
-        #self.but_string_move_inv = self._toggle_button_common_a(vact,"Движение нити инв",     lambda v: self._string_move_inv(v))
-        self.but_vibro_main = self._toggle_button_common_a(vact,"Вибрация", lambda v: self._send_gcode(StringMashType.secondary,f"M581 A{int(v)}"))
-
-        if not MAKET:
-            self.but_string_zero = self._toggle_button_common_a(vact,"Сброс нити",     lambda v: self._string_set_zero_len())
-            self.but_string_moveto = self._toggle_button_common_a(vact,"Запуск движения",     lambda v: self._string_move(v,f"O{int(v)}"))
-        vact.addStretch()
-#--------------------------------------------------------------
-        grp_act = QtWidgets.QGroupBox("Управление нитью")
-        hctrl.addWidget(grp_act)
-        vact = QtWidgets.QVBoxLayout(grp_act)
-        vact.setSpacing(22)    
-
-        # Toggle buttons and actions
-        self.but_string_move = self._toggle_button_common("Движение нити",     lambda v: self._string_move(v,""))
-        self.but_string_move_a = self._toggle_button_common("Нить 1",     lambda v: self.move_string_a(v))
-        self.but_string_move_b = self._toggle_button_common("Нить 2",     lambda v: self.move_string_b(v))
-        self.but_string_move_c = self._toggle_button_common("Нить 3",     lambda v: self.move_string_c(v))
-        if not MAKET:
-            self.but_string_move_d = self._toggle_button_common("Нить 4",     lambda v: self.move_string_d(v))
-            self.but_string_move_e = self._toggle_button_common("Нить 5",     lambda v: self.move_string_e(v))
-        self.but_motors_free = self._toggle_button_common_a(vact,"Освободить",   lambda v: self._relax_motors(v)  )
-        #vact.addWidget(self._toggle_button_common("Питание двиг.",   lambda v:  self._send_gcode(StringMashType.primary,f"M587 W")))
-        vact.addWidget(self._toggle_button_common("Натянуть нити",   lambda v:  self._string_pull(v)))
-        vact.addWidget(self.but_string_move)
-        vact.addWidget(self.but_string_move_a)
-        vact.addWidget(self.but_string_move_b)
-        vact.addWidget(self.but_string_move_c)
-        if not MAKET:
-            vact.addWidget(self.but_string_move_d)
-            vact.addWidget(self.but_string_move_e)
-        vact.addStretch()
-#--------------------------------------------------------------
-        # --- Control ext Tab ---
-        tab_ctrl_ext = QtWidgets.QWidget()
-        tabs.addTab(tab_ctrl_ext, "Дополнительные")
-        hctrl = QtWidgets.QHBoxLayout(tab_ctrl_ext)
-        hctrl.setSpacing(spacing)
-        hctrl.setContentsMargins(25, 25, 25, 25)
-
-        grp_act = QtWidgets.QGroupBox("Действия")
-        hctrl.addWidget(grp_act)
-        vact = QtWidgets.QVBoxLayout(grp_act)
-        vact.setSpacing(spacing)
-
-        self.but_gateway = self._toggle_button_common_a(vact,"Движение шлюза",      lambda v: self._gateway_move(v))
-        self.but_tare_string = self._toggle_button_common_a(vact,"Тарировать тенз. датчики",   lambda v: self.tare_string(v))
-        #self.but_hv_rele = self._toggle_button_common_a(vact,"Высокое напряжение",lambda v: self._send_gcode(StringMashType.primary, f"M579 I2 S{int(v)}"))
-        #self.but_24out_rele = self._toggle_button_common_a(vact,"Питание переф",lambda v: self._send_gcode(StringMashType.primary, f"M579 I6 S{int(v)}"))
-        self.but_press_rele = self._toggle_button_common_a(vact,"Давление", lambda v: self._send_gcode(StringMashType.primary, f"M579 I3 S{int(v)}"))
-        #self.but_temp_sens = self._toggle_button_common_a(vact,"Внешний датчик", lambda v: self._send_gcode(StringMashType.primary,f"M579 N{int((not v))}"))
-        vact.addWidget(self._toggle_button_common("Выход",  self.disconnect_serial))
-
-        vact.addStretch()
-        grp_par = QtWidgets.QGroupBox("Действия 2")
-        hctrl.addWidget(grp_par)
-        vpar = QtWidgets.QVBoxLayout(grp_par)
-        vpar.setSpacing(spacing)
-        
-        #vpar.addWidget(self._toggle_button_common("Рекуперация инв", lambda v: self._recuperator_move_inv(v)))   
-        if not MAKET:     
-            self.but_karet_home = self._toggle_button_common_a(vpar,"Каретка дом", lambda v: self._karet_home(v))
-        self.but_feed_pound = self._toggle_button_common_a(vpar,"Подача порошка", lambda v: self._feed_pound(v))
-        self.but_camera_find = self._toggle_button_common_a(vpar,"Найти камеры", lambda v:  self._send_gcode(StringMashType.primary,f"M592"))
-
-        if not MAKET:     
-            self.but_string_ending = self._toggle_button_common_a(vpar,"Заканчивается нить", lambda v: self._send_gcode(StringMashType.primary,f"M594 {int(v)}"))
-            self.but_pound_ending = self._toggle_button_common_a(vpar,"Заканчивается порошок", lambda v: self._send_gcode(StringMashType.primary,f"M595 {int(v)}"))
-            self.but_string_move_inv = self._toggle_button_common_a(vpar,"Движение нити инв",     lambda v: self._string_move_inv(v))
-        vpar.addStretch()
-
-
-        
-        # --- Heater Control Tab ---
-        tab_ctrl = QtWidgets.QWidget()
-        tabs.addTab(tab_ctrl, "Настройки вибрации")
-        hctrl = QtWidgets.QHBoxLayout(tab_ctrl)
-        hctrl.setSpacing(spacing)
-        hctrl.setContentsMargins(25, 25, 25, 25)
-
-        # Parameters
-        grp_par = QtWidgets.QGroupBox("Параметры")
-        hctrl.addWidget(grp_par)
-        vpar = QtWidgets.QVBoxLayout(grp_par)
-        vpar.setSpacing(spacing)
-
-        #self._add_slider(vpar, "Коэффициент 1", "", 0, 1000, 100,  lambda v: self._send_gcode(StringMashType.primary,f"M579 K{(v):.4f}"),0.001)#def com
-        #self._add_slider(vpar, "Коэффициент 2", "", 0, 1000, 100,  lambda v: self._send_gcode(StringMashType.primary,f"M579 P{(v):.4f}"),0.001)
-        #self._add_slider(vpar, "Время цикла", "с", 0, 1000, 100,  lambda v: self._send_gcode(StringMashType.primary,f"M579 L{(v):.4f}"),0.1)
-        
-        #self._add_slider(vpar, "Частота вибрации", "с", 100, 4000, 2800,  lambda v: self._send_gcode(StringMashType.secondary,f"M581 D{v:.2f}"))
-        #self.slab_vibr_vel = self._add_slider_na(vpar, "Скорость вибрации", "", 1, 300, 10,  lambda v: self._send_gcode(StringMashType.secondary,f"M585 W{int(v)}"))
-        #self.slab_vibr_ampl_rec = self._add_slider_na(vpar, "Амплитуда вибрации рекуп", "", 1, 100, 10,  lambda v: self._send_gcode(StringMashType.secondary,f"M585 Z V{int(v)}"))
-        
-        self.slab_vibr_ampl_shkiv = self._add_slider_na(vpar, "Амплитуда вибрации шкив", "", 1, 255, 10,  lambda v: self._send_gcode(StringMashType.secondary,f"M581 C{int(v)}"))
-        #self.slab_vibr_ampl_up = self._add_slider_na(vpar, "Амплитуда вибрации нижнего", "", 1, 255, 10,  lambda v: self._send_gcode(StringMashType.secondary,f"M581 D{int(v)}"))
-        self.slab_vibr_cycle_time = self._add_slider_na(vpar, "Длина цикла", "с", 10, 10000, 10,  lambda v: self._send_gcode(StringMashType.secondary,f"M581 B{int(v)}"))
-
-        
-        vpar.addStretch()
 
 
         # --- Prog Control Tab ---
@@ -912,6 +517,11 @@ class StringGUI(QtWidgets.QWidget):
             self.textbox.setText(self.textbox.toPlainText()+"G1 X0 Y10 E12\n")
             self.textbox.setText(self.textbox.toPlainText()+"G1 X0 Y0 Z0 E12 F600\n")
 
+            self.lbl_state_main =  QtWidgets.QLabel()
+            self.lbl_state_main.setAlignment(Qt.AlignTop)
+            self.lbl_state_main.setText('\n\n\n\nОбъём вверх\nОбъём вверх\nОбъём вверх\nОбъём вверх\nОбъём вверх\nОбъём вверх\nОбъём вверх\nОбъём вверх\n')
+            hctrl.addWidget(self.lbl_state_main)
+
             grp_par = QtWidgets.QGroupBox("Авто")
             hctrl.addWidget(grp_par)
             vpar = QtWidgets.QVBoxLayout(grp_par)
@@ -920,6 +530,7 @@ class StringGUI(QtWidgets.QWidget):
             self.but_feed_pound = self._toggle_button_common_a(vpar,"Пауза", lambda v: self._start_prog(v))
             self.but_feed_pound = self._toggle_button_common_a(vpar,"Home", lambda v: self._set_home(v))
             self.but_feed_pound = self._toggle_button_common_a(vpar,"Home_test", lambda v: self._set_home_test(v))
+            self.but_feed_pound = self._toggle_button_common_a(vpar,"Delta calibrate", lambda v: self._set_delta_calibr(v))
             self.but_feed_pound = self._toggle_button_common_a(vpar,"Уст. т. 0", lambda v: self._set_zero_p(v))
 
             grp_par = QtWidgets.QGroupBox("Ручн")
@@ -978,16 +589,22 @@ class StringGUI(QtWidgets.QWidget):
 
     def _set_home(self, val):
         if val:
-            self._send_gcode(StringMashType.primary,f"M589 X20")
+            self._send_gcode(StringMashType.primary,f"M589 X40")
         else:
             pass
                 #self._send_gcode(StringMashType.primary,f"M597 2")
 
     def _set_home_test(self, val):
-            if val:
-                self._send_gcode(StringMashType.primary,f"M589 Y80")
-            else:
-                pass
+        if val:
+            self._send_gcode(StringMashType.primary,f"M589 Y40")
+        else:
+            pass
+
+    def _set_delta_calibr(self, val):
+        if val:
+            self._send_gcode(StringMashType.primary,f"M613 18")
+        else:
+            pass
 
     # ------------------------- BUILD UI -------------------------
     def _build_ui_rele(self) -> None:
@@ -1283,9 +900,9 @@ class StringGUI(QtWidgets.QWidget):
         pass
 
     def _update_state(self, state1: StringStatePrimary, state2: StringStateSecondary) -> None: 
-        self.lbl_state.setText("_____________Состояние\n"+str(state1)+"\n")
+        #self.lbl_state.setText("_____________Состояние\n"+str(state1)+"\n")
         self.lbl_state_main.setText("\n\n\n\nСостояние"+str(state1))
-        self.lbl_state_sec.setText("\n\n\n\nСостояние"+str(state2))
+        #self.lbl_state_sec.setText("\n\n\n\nСостояние"+str(state2))
 
     def _update_state_sec(self, state: StringStateSecondary) -> None:
         self.lbl_state_sec.setText("\n\n\n\nСостояние"+str(state))
@@ -1641,7 +1258,7 @@ if __name__ == "__main__":
         proc = subprocess.Popen("serv\\tcp_to_udp.exe")
         time.sleep(0.5)"""
     dialog = StringGUI()
-    dialog.setWindowFlags(Qt.WindowCloseButtonHint | Qt.WindowType_Mask)
+    #dialog.setWindowFlags(Qt.WindowCloseButtonHint | Qt.WindowType_Mask)
     dialog.show()
     #dialog.showFullScreen()
 

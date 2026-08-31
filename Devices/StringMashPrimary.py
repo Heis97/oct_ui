@@ -12,45 +12,22 @@ if MAKET:
     TENS_NUM = 5
 
 class StringStatePrimary(object):
+    cur_a:int = 0
+    cur_b:int = 0
+    cur_c:int = 0
+    cur_e:int = 0
 
+    cur_counter:int = 0
+    cur_buf:int = 0
+    delta_calib:int = 0
+    ring_buf_go:int = 0
+    homing_done:int = 0
+
+    x:float = 0.0
+    y:float = 0.0
+    z:float = 0.0
+    debug:int = 0
     
-    temp_val_int1:float = 0
-    temp_val_int2:float= 0
-    temp_val_ext:float= 0
-    reley_1:int= 0
-    reley_2:int= 0
-    reley_HV:int= 0
-    reley_press:int= 0
-    string_lenght:int= 0
-    pressure:int= 0
-    HV:int= 0
-    turbo:int= 0
-    moves_planned:int= 0
-    time_measure:int= 0
-    duty_1:int = 0
-    duty_2:int = 0
-    string_move_second:list = [0.0,0.0,0.0,0.0,0.0]
-    force_string1:list = [0.0,0.0,0.0,0.0,0.0]
-    len_string1:list = [0,0,0,0,0]
-    step_s:list = [0.0,0.0,0.0,0.0,0.0]
-    f_dest_s:list = [0.0,0.0,0.0,0.0,0.0]
-    tens_num = TENS_NUM
-    cur_speed_tens_com = 0
-    parsed:bool = False
-
-    motors_free_state = 0
-    homing_karet = 0 
-    karet_in_work_pos = 0
-    reley_24_out = 0
-    tare_tens = 0
-
-    ind_sensor = 0
-    temp_dest = 0
-    pressure_dest = 0
-
-    heater_en = 0
-
-    string_ended = 0
 
     def __init__(self, data:str,state:"StringStatePrimary"=None):    
         self.parsed = False
@@ -73,59 +50,35 @@ class StringStatePrimary(object):
         if state is not None:
             self.clone(state)
         #print(len(values))
-        if len(values) > 6: 
-            cur_send = int(values[1])     
+        if len(values) > 13: 
 
-            #print(self.tens_num,cur_send,cur_send == self.tens_num)
             try:
-                if cur_send<self.tens_num:
-                    i = cur_send
-                    self.string_move_second[i] = round(  float(values[2]),1)
-                    self.force_string1[i] = round(  float(values[3]),1)
-                    self.len_string1[i] = int(values[4])
-                    self.step_s[i] = round(float(values[5]),4)
-                    self.f_dest_s[i] = round(float(values[6]),2)
 
-                elif cur_send == self.tens_num:
-                    self.temp_val_ext = round( float(values[2]),2) 
-                    self.temp_val_int2 = round( float(values[3]))
-                    self.temp_val_int1 = round( float(values[4]))
-                    self.reley_24_out = int(values[5])#reley_24_out                
-                    self.reley_HV = int(values[6])
-                    #print("parse",self.temp_val_ext)
-
-                elif cur_send == self.tens_num+1:
-                    self.reley_press = int(values[2])
-                    self.pressure = float(values[3])
-                    if self.pressure > 60000: self.pressure = 0.0
-                    self.pressure = round( (self.pressure-237)/10)
-                    if self.pressure < 0: self.pressure = 0.0
-                    self.HV= float(values[4])
-                    #self.HV = round( 40 *( self.HV/1610))
-                    self.motors_free_state= int(values[5])
-                    self.time_measure = int(values[6])
-
-                elif cur_send == self.tens_num+2:
-                    self.homing_karet = int(values[2]) #homing karet
-                    self.ind_sensor = int(values[3]) 
-                    self.tare_tens = int(values[4]) #karet in work pos
-                    self.pressure_dest = int(values[5]) #karet in work pos
-                    self.temp_dest = float(values[6]) #karet in work pos      
-                         
-                elif cur_send == self.tens_num+3:
-                    self.heater_en = int(values[2]) #
-                    self.duty_1 = int(values[3]) #
-                    self.duty_2 = int(values[4]) #
-                    self.string_ended = int(values[5]) #
 
                 if TEST_PROG:
-                    self.time_measure = int(values[1])
-                    self.temp_val_ext = int(values[2])
-                    self.temp_val_int2 =int(values[3])
-                    self.temp_val_int1 = int(values[4])
-                    self.cur_speed_tens_com = int(values[5])#reley_24_out                
-                    self.reley_24_out= int(values[6])
-                    self.duty_1= int(values[7])
+
+
+
+                    self.cur_buf:int = int(values[1])
+                    self.cur_a:int = int(values[2])
+                    self.cur_b:int = int(values[3])
+                    self.cur_c:int = int(values[4])
+                    self.cur_e:int = int(values[5])
+                
+                    self.cur_counter:int = int(values[6])
+                    
+                    self.delta_calib:int = int(values[7])
+                    self.ring_buf_go:int = int(values[8])
+                    self.homing_done:int = int(values[9])
+
+                    self.debug = int(values[10])
+
+                    self.x= float(values[11])
+                    self.y = float(values[12])
+                    self.z = float(values[13])
+
+                    
+
 
                 self.parsed = True
             except :
@@ -137,54 +90,32 @@ class StringStatePrimary(object):
         #print(self)
 
     def clone(self,state:"StringStatePrimary"):
-        self.temp_val_int1:float = state.temp_val_int1
-        self.temp_val_int2:float= state.temp_val_int2
-        self.temp_val_ext:float= state.temp_val_ext
-        self.reley_1:int= state.reley_1
-        self.reley_2:int= state.reley_2
-        self.reley_HV:int= state.reley_HV
-        self.reley_press:int= state.reley_press
-        self.string_lenght:int= state.string_lenght
-        self.pressure:int= state.pressure
-        self.HV:int= state.HV
-        self.turbo:int= state.turbo
-        self.moves_planned:int= state.moves_planned
-        self.time_measure:int= state.time_measure
-        self.duty_1:int = state.duty_1
-        self.duty_2:int = state.duty_2
-        self.string_move_second:list = state.string_move_second
-        self.force_string1:list = state.force_string1
-        self.len_string1:list = state.len_string1
-        self.step_s:list = state.step_s
-        self.f_dest_s:list = state.f_dest_s
-        self.cur_speed_tens_com = state.cur_speed_tens_com
+        self.cur_a:int = state.cur_a
+        self.cur_b:int = state.cur_b
+        self.cur_c:int = state.cur_c
+        self.cur_e:int = state.cur_e
+    
+        self.cur_counter:int = state.cur_counter
+        self.cur_buf:int = state.cur_buf
+        self.delta_calib:int = state.delta_calib
+        self.ring_buf_go:int = state.ring_buf_go
+        self.homing_done:int = state.homing_done
+        
+        
+        self.x:float = state.x
+        self.y:float = state.y
+        self.z:float = state.z
 
-        self.motors_free_state = state.motors_free_state
-        self.homing_karet = state.homing_karet
-        self.karet_in_work_pos = state.karet_in_work_pos
-        self.reley_24_out = state.reley_24_out
-        self.tare_tens = state.tare_tens
-
-        self.ind_sensor = state.ind_sensor
-        self.temp_dest = state.temp_dest
-        self.pressure_dest = state.pressure_dest
-
-        self.heater_en = state.heater_en
-
+        self.debug:int = state.debug
         pass
 
     def __str__(self):
         #print("out ",self.temp_val_ext)
-        outp = "\nT_e: "+\
-            str(self.temp_val_ext)+"\n "+str(self.temp_val_int2)+"\n"+str(self.temp_val_int1)+"\n "+str(self.cur_speed_tens_com)+"\n"+str(self.reley_24_out)+"\n"+str(self.time_measure)+"\n "+str(self.duty_1)+"\n "+str(self.duty_2)+"\n "
-        """outp = "\nT1:"+str(self.temp_val_int1) +"\nT2: "+str(self.temp_val_int2)+"\nT_e: "+\
-            str(self.temp_val_ext)+"\n "+str(self.reley_1)+"\n "+str(self.reley_2)+\
-                "\n "+str(self.reley_HV)+"\n "+str(self.reley_press)+"\n L:"+str(round(self.string_lenght*0.00651922607,1))+"\n P:"+str(self.pressure)+\
-                    "\n HV:"+str(self.HV)+"\n "+str(self.turbo)+"\n "+str(self.moves_planned)+"\n "+str(self.time_measure)+"\n "+str(self.duty_1)+"\n "+str(self.duty_2)+"\n"""
-        len = self.tens_num
-        if MAKET: len =3
-        for i in range(len):
-            outp +="F"+str(i+1)+":"+str(self.force_string1[i])+"\n Len"+str(i+1)+":"+str(self.len_string1[i])+"\n v"+str(i+1)+":"+str(self.step_s[i])+"\n f_dest"+str(i+1)+":"+str(self.f_dest_s[i])+"\n"
+        outp = "\ncur_buf: "+\
+            str(self.cur_buf)+"\ncur_a: "+str(self.cur_a)+"\ncur_b: "+str(self.cur_b)+"\ncur_c: "+str(self.cur_c)+"\ncur_e: "+str(self.cur_e)+"\ncur_counter: "+str(self.cur_counter)+\
+                "\ndelta_calib: "+str(self.delta_calib)+"\nring_buf_go: "+str(self.ring_buf_go)+"\nhoming_done: "+str(self.homing_done)+"\n "+\
+                "\nx: "+str(round( self.x,2))+"\ny: "+str(round( self.y,2))+"\nz: "+str(round( self.z,2))+"\ndebug: "+str( self.debug)
+
         return outp
                         
 
