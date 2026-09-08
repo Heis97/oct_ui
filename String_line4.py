@@ -497,7 +497,7 @@ class StringGUI(QtWidgets.QWidget):
 
         
             tab_ctrl = QtWidgets.QWidget()
-            tabs.addTab(tab_ctrl, "тест прог")
+            tabs.addTab(tab_ctrl, "Программа")
             hctrl = QtWidgets.QHBoxLayout(tab_ctrl)
             hctrl.setSpacing(spacing)
             hctrl.setContentsMargins(25, 25, 25, 25)
@@ -533,6 +533,8 @@ class StringGUI(QtWidgets.QWidget):
             self.but_feed_pound = self._toggle_button_common_a(vpar,"Delta calibrate", lambda v: self._set_delta_calibr(v))
             self.but_feed_pound = self._toggle_button_common_a(vpar,"Уст. т. 0", lambda v: self._set_zero_p(v))
 
+            vpar.addStretch()
+
             grp_par = QtWidgets.QGroupBox("Ручн")
             hctrl.addWidget(grp_par)
             vpar = QtWidgets.QVBoxLayout(grp_par)
@@ -546,9 +548,50 @@ class StringGUI(QtWidgets.QWidget):
             self.but_feed_pound = self._momentary_button_common_a(vpar,"+E", lambda v: self._jog_bool(v,6))
             self.but_feed_pound = self._momentary_button_common_a(vpar,"-E", lambda v: self._jog_bool(v,7))
             
+ 
+            vpar.addStretch()
 
 
-        
+        tab_ctrl = QtWidgets.QWidget()
+        tabs.addTab(tab_ctrl, "Перифирия")
+        hctrl = QtWidgets.QHBoxLayout(tab_ctrl)
+        hctrl.setSpacing(spacing)
+        hctrl.setContentsMargins(25, 25, 25, 25)
+
+        # Parameters
+        grp_par = QtWidgets.QGroupBox("Манипулятор")
+        hctrl.addWidget(grp_par)
+        vpar = QtWidgets.QVBoxLayout(grp_par)
+        vpar.setSpacing(spacing)
+        self.but_feed_pound = self._momentary_button_common_a(vpar,"+rot", lambda v: self._jog_periph(v,4,1))
+        self.but_feed_pound = self._momentary_button_common_a(vpar,"-rot", lambda v: self._jog_periph(v,4,-1))
+        self.but_feed_pound = self._momentary_button_common_a(vpar,"+up", lambda v: self._jog_periph(v,3,1))
+        self.but_feed_pound = self._momentary_button_common_a(vpar,"-down", lambda v: self._jog_periph(v,3,-1))
+
+        self.but_feed_pound = self._momentary_button_common_a(vpar,"home rot", lambda v: self._home_ax(v,4))
+        self.but_feed_pound = self._momentary_button_common_a(vpar,"home lift", lambda v: self._home_ax(v,3))
+        vpar.addStretch()
+
+
+        grp_par = QtWidgets.QGroupBox("Осциллятор")
+        hctrl.addWidget(grp_par)
+        vpar = QtWidgets.QVBoxLayout(grp_par)
+        vpar.setSpacing(spacing)
+        self.but_feed_pound = self._momentary_button_common_a(vpar,"+rot", lambda v: self._jog_periph(v,0,1))
+        self.but_feed_pound = self._momentary_button_common_a(vpar,"-rot", lambda v: self._jog_periph(v,0,-1))
+        self.but_feed_pound = self._momentary_button_common_a(vpar,"+up", lambda v: self._jog_periph(v,0,1))
+        self.but_feed_pound = self._momentary_button_common_a(vpar,"-down", lambda v: self._jog_periph(v,0,-1))
+        vpar.addStretch()
+
+        grp_par = QtWidgets.QGroupBox("Система подачи")
+        hctrl.addWidget(grp_par)
+        vpar = QtWidgets.QVBoxLayout(grp_par)
+        vpar.setSpacing(spacing)
+        self.but_feed_pound = self._momentary_button_common_a(vpar,"+x", lambda v: self._jog_bool(v,0))
+        self.but_feed_pound = self._momentary_button_common_a(vpar,"-x", lambda v: self._jog_bool(v,0))
+
+        self.but_feed_pound = self._momentary_button_common_a(vpar,"up", lambda v: self._jog_bool(v,0))
+        self.but_feed_pound = self._momentary_button_common_a(vpar,"down", lambda v: self._jog_bool(v,0))
         vpar.addStretch()
 
         
@@ -568,6 +611,18 @@ class StringGUI(QtWidgets.QWidget):
             self._send_gcode(StringMashType.primary,f"M611 {int(type)}")
         else:
             self._send_gcode(StringMashType.primary,f"M597 2")
+
+    def _jog_periph(self, val, type, dir):
+        if val:
+            self._send_gcode(StringMashType.primary,f"M587 I{int(type)} S{int(100000*dir)}")
+        else:
+            self._send_gcode(StringMashType.primary,f"M587 I{int(type)} S0")
+
+    def _home_ax(self, val, type):
+        if val:
+            self._send_gcode(StringMashType.primary,f"M587 I{int(type)} H")
+        else:
+            pass
 
     def _start_prog(self, val):
         if val:
