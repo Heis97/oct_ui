@@ -12,10 +12,9 @@ if MAKET:
     TENS_NUM = 5
 
 class StringStatePrimary(object):
-    cur_a:int = 0
-    cur_b:int = 0
-    cur_c:int = 0
-    cur_e:int = 0
+    axis_names = ["X","Y","Z","I","J","K","U","E"]
+    cur_pos: "list[int]" = 8*[0]
+    cur_end: "list[int]" = 8*[0]
 
     cur_counter:int = 0
     cur_buf:int = 0
@@ -33,7 +32,7 @@ class StringStatePrimary(object):
         self.parsed = False
         if "st1" not in data: return
 
-        
+        #print(data)
         data = data.replace("'",'')
         data = data.replace("b",'')
         data = data.replace('  ',' ')
@@ -45,7 +44,7 @@ class StringStatePrimary(object):
         data = data.replace('  ',' ')
         data = data.replace('  ',' ')
         data = data.strip()
-        #print(data)
+        
         values = data.split(" ")
         if state is not None:
             self.clone(state)
@@ -53,29 +52,26 @@ class StringStatePrimary(object):
         if len(values) > 13: 
 
             try:
+                self.cur_buf:int = int(values[1])
+                cur_send = int(values[2])
+                if cur_send == 0:
+                   
+                    self.cur_counter:int = int(values[3])                   
+                    self.delta_calib:int = int(values[4])
+                    self.ring_buf_go:int = int(values[5])
+                    self.homing_done:int = int(values[6])
 
+                elif cur_send == 1:
+                    for i in range(8):
+                        self.cur_pos[i] = int(values[3+i]) 
 
-                if TEST_PROG:
-
-
-
-                    self.cur_buf:int = int(values[1])
-                    self.cur_a:int = int(values[2])
-                    self.cur_b:int = int(values[3])
-                    self.cur_c:int = int(values[4])
-                    self.cur_e:int = int(values[5])
-                
-                    self.cur_counter:int = int(values[6])
-                    
-                    self.delta_calib:int = int(values[7])
-                    self.ring_buf_go:int = int(values[8])
-                    self.homing_done:int = int(values[9])
-
-                    self.debug = int(values[10])
-
-                    self.x= float(values[11])
+                    self.x = float(values[11])
                     self.y = float(values[12])
                     self.z = float(values[13])
+
+                elif cur_send == 2:
+                    for i in range(8):
+                        self.cur_end[i] = int(values[3+i]) 
 
                     
 
@@ -90,10 +86,9 @@ class StringStatePrimary(object):
         #print(self)
 
     def clone(self,state:"StringStatePrimary"):
-        self.cur_a:int = state.cur_a
-        self.cur_b:int = state.cur_b
-        self.cur_c:int = state.cur_c
-        self.cur_e:int = state.cur_e
+        self.cur_pos = state.cur_pos
+        self.cur_end = state.cur_end
+
     
         self.cur_counter:int = state.cur_counter
         self.cur_buf:int = state.cur_buf
@@ -111,10 +106,16 @@ class StringStatePrimary(object):
 
     def __str__(self):
         #print("out ",self.temp_val_ext)
-        outp = "\ncur_buf: "+\
-            str(self.cur_buf)+"\ncur_a: "+str(self.cur_a)+"\ncur_b: "+str(self.cur_b)+"\ncur_c: "+str(self.cur_c)+"\ncur_e: "+str(self.cur_e)+"\ncur_counter: "+str(self.cur_counter)+\
+        outp = "cur_counter: "+str(self.cur_counter)+\
                 "\ndelta_calib: "+str(self.delta_calib)+"\nring_buf_go: "+str(self.ring_buf_go)+"\nhoming_done: "+str(self.homing_done)+"\n "+\
-                "\nx: "+str(round( self.x,2))+"\ny: "+str(round( self.y,2))+"\nz: "+str(round( self.z,2))+"\ndebug: "+str( self.debug)
+                "\nx: "+str(round( self.x,2))+"\ny: "+str(round( self.y,2))+"\nz: "+str(round( self.z,2))
+        
+        outp += "\n"
+        for i in range(8):
+            outp += "\n"+self.axis_names[i]+"pos: "+str(self.cur_pos[i])
+        outp += "\n"
+        for i in range(8):
+            outp += "\n"+self.axis_names[i]+"end: "+str(self.cur_end[i])
 
         return outp
                         

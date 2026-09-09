@@ -493,73 +493,78 @@ class StringGUI(QtWidgets.QWidget):
 
 
         # --- Prog Control Tab ---
-        if TEST_PROG:
+
 
         
-            tab_ctrl = QtWidgets.QWidget()
-            tabs.addTab(tab_ctrl, "Программа")
-            hctrl = QtWidgets.QHBoxLayout(tab_ctrl)
-            hctrl.setSpacing(spacing)
-            hctrl.setContentsMargins(25, 25, 25, 25)
+        tab_ctrl = QtWidgets.QWidget()
+        tabs.addTab(tab_ctrl, "Программа")
+        hctrl = QtWidgets.QHBoxLayout(tab_ctrl)
+        hctrl.setSpacing(spacing)
+        hctrl.setContentsMargins(25, 25, 25, 25)
 
-            # Parameters
-            grp_par = QtWidgets.QGroupBox("Печать")
-            hctrl.addWidget(grp_par)
-            vpar = QtWidgets.QVBoxLayout(grp_par)
-            vpar.setSpacing(spacing)
+        # Parameters
+        grp_par = QtWidgets.QGroupBox("Печать")
+        hctrl.addWidget(grp_par)
+        vpar = QtWidgets.QVBoxLayout(grp_par)
+        vpar.setSpacing(spacing)
 
-            #self.slab_vibr_ampl_shkiv = self._add_slider_na(vpar, "Подача", "", 1, 255, 10,  lambda v: self._send_gcode(StringMashType.secondary,f"M581 C{int(v)}"))
-            self.textbox:QtWidgets.QTextEdit = self._add_textbox_na(vpar,1.0)
-            
-            self.textbox.setText("G1 X0 Y0 F600\n")
-            self.textbox.setText(self.textbox.toPlainText()+"G1 X10 E4\n")
-            self.textbox.setText(self.textbox.toPlainText()+"G1 X10 Y10 E8\n")
-            self.textbox.setText(self.textbox.toPlainText()+"G1 X0 Y10 E12\n")
-            self.textbox.setText(self.textbox.toPlainText()+"G1 X0 Y0 Z0 E12 F600\n")
+        #self.slab_vibr_ampl_shkiv = self._add_slider_na(vpar, "Подача", "", 1, 255, 10,  lambda v: self._send_gcode(StringMashType.secondary,f"M581 C{int(v)}"))
+        self.textbox:QtWidgets.QTextEdit = self._add_textbox_na(vpar,1.0)
+        
+        self.textbox.setText("G1 X0 Y0 F600\n")
+        self.textbox.setText(self.textbox.toPlainText()+"G1 X10 E4\n")
+        self.textbox.setText(self.textbox.toPlainText()+"G1 X10 Y10 E8\n")
+        self.textbox.setText(self.textbox.toPlainText()+"G1 X0 Y10 E12\n")
+        self.textbox.setText(self.textbox.toPlainText()+"G1 X0 Y0 Z0 E12 F600\n")
 
-            self.lbl_state_main =  QtWidgets.QLabel()
-            self.lbl_state_main.setAlignment(Qt.AlignTop)
-            self.lbl_state_main.setText('\n\n\n\nОбъём вверх\nОбъём вверх\nОбъём вверх\nОбъём вверх\nОбъём вверх\nОбъём вверх\nОбъём вверх\nОбъём вверх\n')
-            hctrl.addWidget(self.lbl_state_main)
+        self.lbl_state_main =  QtWidgets.QLabel()
+        self.lbl_state_main.setAlignment(Qt.AlignTop)
+        self.lbl_state_main.setText('\n\n\n\nОбъём вверх\nОбъём вверх\nОбъём вверх\nОбъём вверх\nОбъём вверх\nОбъём вверх\nОбъём вверх\nОбъём вверх\n')
+        hctrl.addWidget(self.lbl_state_main)
 
-            grp_par = QtWidgets.QGroupBox("Авто")
-            hctrl.addWidget(grp_par)
-            vpar = QtWidgets.QVBoxLayout(grp_par)
-            vpar.setSpacing(spacing)
-            self.but_feed_pound = self._toggle_button_common_a(vpar,"Запуск прогр", lambda v: self._start_prog(v))
-            self.but_feed_pound = self._toggle_button_common_a(vpar,"Пауза", lambda v: self._start_prog(v))
-            self.but_feed_pound = self._toggle_button_common_a(vpar,"Home", lambda v: self._set_home(v))
-            self.but_feed_pound = self._toggle_button_common_a(vpar,"Home_test", lambda v: self._set_home_test(v))
-            self.but_feed_pound = self._toggle_button_common_a(vpar,"Delta calibrate", lambda v: self._set_delta_calibr(v))
-            self.but_feed_pound = self._toggle_button_common_a(vpar,"Уст. т. 0", lambda v: self._set_zero_p(v))
+        grp_par = QtWidgets.QGroupBox("Авто")
+        hctrl.addWidget(grp_par)
+        vpar = QtWidgets.QVBoxLayout(grp_par)
+        vpar.setSpacing(spacing)
+        self.but_feed_pound = self._toggle_button_common_a(vpar,"Запуск прогр", lambda v: self._start_prog(v))
+        self.but_feed_pound = self._toggle_button_common_a(vpar,"Пауза", lambda v: self._start_prog(v))
+        self.but_feed_pound = self._toggle_button_common_a(vpar,"Home", lambda v: self._set_home(v))
+        self.but_feed_pound = self._toggle_button_common_a(vpar,"Home_test", lambda v: self._set_home_test(v))
+        self.but_feed_pound = self._toggle_button_common_a(vpar,"Delta calibrate", lambda v: self._set_delta_calibr(v))
+        self.but_feed_pound = self._toggle_button_common_a(vpar,"Уст. т. 0", lambda v: self._set_zero_p(v))
 
-            vpar.addStretch()
+        vpar.addStretch()
 
-            grp_par = QtWidgets.QGroupBox("Ручн")
-            hctrl.addWidget(grp_par)
-            vpar = QtWidgets.QVBoxLayout(grp_par)
-            vpar.setSpacing(spacing)
-            self.but_feed_pound = self._momentary_button_common_a(vpar,"+X", lambda v: self._jog_bool(v,0))
-            self.but_feed_pound = self._momentary_button_common_a(vpar,"-X", lambda v: self._jog_bool(v,1))
-            self.but_feed_pound = self._momentary_button_common_a(vpar,"+Y", lambda v: self._jog_bool(v,2))
-            self.but_feed_pound = self._momentary_button_common_a(vpar,"-Y", lambda v: self._jog_bool(v,3))
-            self.but_feed_pound = self._momentary_button_common_a(vpar,"+Z", lambda v: self._jog_bool(v,4))
-            self.but_feed_pound = self._momentary_button_common_a(vpar,"-Z", lambda v: self._jog_bool(v,5))
-            self.but_feed_pound = self._momentary_button_common_a(vpar,"+E", lambda v: self._jog_bool(v,6))
-            self.but_feed_pound = self._momentary_button_common_a(vpar,"-E", lambda v: self._jog_bool(v,7))
-            
- 
-            vpar.addStretch()
+        grp_par = QtWidgets.QGroupBox("Ручн")
+        hctrl.addWidget(grp_par)
+        vpar = QtWidgets.QVBoxLayout(grp_par)
+        vpar.setSpacing(spacing)
+        self.but_feed_pound = self._momentary_button_common_a(vpar,"+X", lambda v: self._jog_bool(v,0))
+        self.but_feed_pound = self._momentary_button_common_a(vpar,"-X", lambda v: self._jog_bool(v,1))
+        self.but_feed_pound = self._momentary_button_common_a(vpar,"+Y", lambda v: self._jog_bool(v,2))
+        self.but_feed_pound = self._momentary_button_common_a(vpar,"-Y", lambda v: self._jog_bool(v,3))
+        self.but_feed_pound = self._momentary_button_common_a(vpar,"+Z", lambda v: self._jog_bool(v,4))
+        self.but_feed_pound = self._momentary_button_common_a(vpar,"-Z", lambda v: self._jog_bool(v,5))
+        self.but_feed_pound = self._momentary_button_common_a(vpar,"+E", lambda v: self._jog_bool(v,6))
+        self.but_feed_pound = self._momentary_button_common_a(vpar,"-E", lambda v: self._jog_bool(v,7))
+        
 
+        vpar.addStretch()
 
+        # --- Periph Control Tab ---
         tab_ctrl = QtWidgets.QWidget()
         tabs.addTab(tab_ctrl, "Перифирия")
         hctrl = QtWidgets.QHBoxLayout(tab_ctrl)
         hctrl.setSpacing(spacing)
         hctrl.setContentsMargins(25, 25, 25, 25)
 
+        self.lbl_state_main2 =  QtWidgets.QLabel()
+        self.lbl_state_main2.setAlignment(Qt.AlignTop)
+        self.lbl_state_main2.setText('\n\n\n\nОбъём вверх\nОбъём вверх\nОбъём вверх\nОбъём вверх\nОбъём вверх\nОбъём вверх\nОбъём вверх\nОбъём вверх\n')
+        hctrl.addWidget(self.lbl_state_main2)
+
         # Parameters
-        grp_par = QtWidgets.QGroupBox("Манипулятор")
+        grp_par = QtWidgets.QGroupBox("Осциллятор")
         hctrl.addWidget(grp_par)
         vpar = QtWidgets.QVBoxLayout(grp_par)
         vpar.setSpacing(spacing)
@@ -573,7 +578,7 @@ class StringGUI(QtWidgets.QWidget):
         vpar.addStretch()
 
 
-        grp_par = QtWidgets.QGroupBox("Осциллятор")
+        grp_par = QtWidgets.QGroupBox("Манипулятор")
         hctrl.addWidget(grp_par)
         vpar = QtWidgets.QVBoxLayout(grp_par)
         vpar.setSpacing(spacing)
@@ -594,8 +599,35 @@ class StringGUI(QtWidgets.QWidget):
         self.but_feed_pound = self._momentary_button_common_a(vpar,"down", lambda v: self._jog_bool(v,0))
         vpar.addStretch()
 
-        
-        #self.update_serial_ports()
+        # --- Setup 1 Control Tab ---
+        tab_ctrl = QtWidgets.QWidget()
+        tabs.addTab(tab_ctrl, "Настройки")
+        hctrl = QtWidgets.QHBoxLayout(tab_ctrl)
+        hctrl.setSpacing(spacing)
+        hctrl.setContentsMargins(25, 25, 25, 25)
+
+
+        grp_par = QtWidgets.QGroupBox("Настройка двигателей 1")
+        hctrl.addWidget(grp_par)
+        vpar = QtWidgets.QVBoxLayout(grp_par)
+        vpar.setSpacing(spacing)
+
+        hctrl2 = QtWidgets.QHBoxLayout()
+
+        lab = QtWidgets.QLabel("asdasda")
+        line = QtWidgets.QLineEdit()
+        lab2 = QtWidgets.QLabel("asdafgnfgn")
+        line2 = QtWidgets.QLineEdit()
+        hctrl2.addWidget(lab)
+        #hctrl2.addWidget(line)
+        hctrl2.addWidget(lab2)
+        #hctrl2.addWidget(line2)
+
+        vpar.addChildLayout(hctrl2)
+        vpar.addChildLayout(hctrl2)
+        vpar.addStretch()
+        #-----------------------------------------------------------
+
         self.connect_serial()
         #self.btn_conn.setChecked(True)
         
@@ -957,6 +989,7 @@ class StringGUI(QtWidgets.QWidget):
     def _update_state(self, state1: StringStatePrimary, state2: StringStateSecondary) -> None: 
         #self.lbl_state.setText("_____________Состояние\n"+str(state1)+"\n")
         self.lbl_state_main.setText("\n\n\n\nСостояние"+str(state1))
+        self.lbl_state_main2.setText("\n\n\n\nСостояние"+str(state1))
         #self.lbl_state_sec.setText("\n\n\n\nСостояние"+str(state2))
 
     def _update_state_sec(self, state: StringStateSecondary) -> None:
