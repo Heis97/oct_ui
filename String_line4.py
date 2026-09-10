@@ -532,6 +532,7 @@ class StringGUI(QtWidgets.QWidget):
         self.but_feed_pound = self._toggle_button_common_a(vpar,"Home_test", lambda v: self._set_home_test(v))
         self.but_feed_pound = self._toggle_button_common_a(vpar,"Delta calibrate", lambda v: self._set_delta_calibr(v))
         self.but_feed_pound = self._toggle_button_common_a(vpar,"Уст. т. 0", lambda v: self._set_zero_p(v))
+        self.but_feed_pound = self._toggle_button_common_a(vpar,"Загрузить настройки", lambda v: self._set_settings(v))
 
         vpar.addStretch()
 
@@ -612,19 +613,7 @@ class StringGUI(QtWidgets.QWidget):
         vpar = QtWidgets.QVBoxLayout(grp_par)
         vpar.setSpacing(spacing)
 
-        hctrl2 = QtWidgets.QHBoxLayout()
-
-        lab = QtWidgets.QLabel("asdasda")
-        line = QtWidgets.QLineEdit()
-        lab2 = QtWidgets.QLabel("asdafgnfgn")
-        line2 = QtWidgets.QLineEdit()
-        hctrl2.addWidget(lab)
-        #hctrl2.addWidget(line)
-        hctrl2.addWidget(lab2)
-        #hctrl2.addWidget(line2)
-
-        vpar.addChildLayout(hctrl2)
-        vpar.addChildLayout(hctrl2)
+        
         vpar.addStretch()
         #-----------------------------------------------------------
 
@@ -671,6 +660,12 @@ class StringGUI(QtWidgets.QWidget):
     def _set_zero_p(self, val):
         if val:
             self._send_gcode(StringMashType.primary,f"M612")
+        else:
+            pass
+
+    def _set_settings(self, val):
+        if val:
+            self._send_gcode(StringMashType.primary,f"M614")
         else:
             pass
 
