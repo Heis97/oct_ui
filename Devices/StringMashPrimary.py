@@ -15,17 +15,19 @@ class StringStatePrimary(object):
     axis_names = ["X","Y","Z","I","J","K","U","E"]
     cur_pos: "list[int]" = 8*[0]
     cur_end: "list[int]" = 8*[0]
+    debug: "list[int]" = 8*[0]
 
     cur_counter:int = 0
     cur_buf:int = 0
     delta_calib:int = 0
     ring_buf_go:int = 0
     homing_done:int = 0
+    temp_cur:int = 0
 
     x:float = 0.0
     y:float = 0.0
     z:float = 0.0
-    debug:int = 0
+
     
 
     def __init__(self, data:str,state:"StringStatePrimary"=None):    
@@ -60,6 +62,7 @@ class StringStatePrimary(object):
                     self.delta_calib:int = int(values[4])
                     self.ring_buf_go:int = int(values[5])
                     self.homing_done:int = int(values[6])
+                    self.temp_cur:int = int(values[7])
 
                 elif cur_send == 1:
                     for i in range(8):
@@ -72,6 +75,11 @@ class StringStatePrimary(object):
                 elif cur_send == 2:
                     for i in range(8):
                         self.cur_end[i] = int(values[3+i]) 
+
+
+                elif cur_send == 3:
+                    for i in range(8):
+                        self.debug[i] = int(values[3+i]) 
 
                     
 
@@ -88,6 +96,7 @@ class StringStatePrimary(object):
     def clone(self,state:"StringStatePrimary"):
         self.cur_pos = state.cur_pos
         self.cur_end = state.cur_end
+        self.debug = state.debug
 
     
         self.cur_counter:int = state.cur_counter
@@ -95,19 +104,19 @@ class StringStatePrimary(object):
         self.delta_calib:int = state.delta_calib
         self.ring_buf_go:int = state.ring_buf_go
         self.homing_done:int = state.homing_done
+        self.temp_cur:int = state.temp_cur
         
         
         self.x:float = state.x
         self.y:float = state.y
         self.z:float = state.z
 
-        self.debug:int = state.debug
         pass
 
     def __str__(self):
         #print("out ",self.temp_val_ext)
-        outp = "cur_counter: "+str(self.cur_counter)+\
-                "\ndelta_calib: "+str(self.delta_calib)+"\nring_buf_go: "+str(self.ring_buf_go)+"\nhoming_done: "+str(self.homing_done)+"\n "+\
+        outp = ""+str(self.cur_counter)+\
+                "\ndelta_calib: "+str(self.delta_calib)+"\nring_buf_go: "+str(self.ring_buf_go)+"\nhoming_done: "+str(self.homing_done)+"\ntemp: "+str(self.temp_cur)+"\n "+\
                 "\nx: "+str(round( self.x,2))+"\ny: "+str(round( self.y,2))+"\nz: "+str(round( self.z,2))
         
         outp += "\n"
@@ -116,6 +125,10 @@ class StringStatePrimary(object):
         outp += "\n"
         for i in range(8):
             outp += "\n"+self.axis_names[i]+"end: "+str(self.cur_end[i])
+
+        outp += "\n"
+        for i in range(8):
+            outp += "\ndeb: "+str(self.debug[i])
 
         return outp
                         
