@@ -21,6 +21,7 @@ Usage:
 import subprocess
 from enum import Enum
 import sys
+import os
 from typing import Tuple
 import cv2
 import numpy as np
@@ -34,6 +35,8 @@ from Devices.StringMashComp import *
 from Devices.StringMash import *
 from Microsc import *
 import threading
+
+from Viewer3D_GL import GLWidget
 #press 237 to 640
 #hv 1610 max
 TEST_PROG = True
@@ -526,8 +529,8 @@ class StringGUI(QtWidgets.QWidget):
         hctrl.addWidget(grp_par)
         vpar = QtWidgets.QVBoxLayout(grp_par)
         vpar.setSpacing(spacing)
-        self.but_feed_pound = self._toggle_button_common_a(vpar,"Запуск прогр", lambda v: self._start_prog(v))
-        self.but_feed_pound = self._toggle_button_common_a(vpar,"Пауза", lambda v: self._start_prog(v))
+        self.but_feed_pound = self._toggle_button_common_a(vpar,"Запуск прогр", lambda v: self._start_prog(v,self.textbox))
+        self.but_feed_pound = self._toggle_button_common_a(vpar,"Пауза", lambda v: self._start_prog(v,self.textbox))
         self.but_feed_pound = self._toggle_button_common_a(vpar,"Home", lambda v: self._set_home(v))
         self.but_feed_pound = self._toggle_button_common_a(vpar,"Home_test", lambda v: self._set_home_test(v))
         self.but_feed_pound = self._toggle_button_common_a(vpar,"Delta calibrate", lambda v: self._set_delta_calibr(v))
@@ -565,21 +568,6 @@ class StringGUI(QtWidgets.QWidget):
         hctrl.addWidget(self.lbl_state_main2)
 
         # Parameters
-        """grp_par = QtWidgets.QGroupBox("Осциллятор")
-        hctrl.addWidget(grp_par)
-        vpar = QtWidgets.QVBoxLayout(grp_par)
-        vpar.setSpacing(spacing)
-        self.but_feed_pound = self._momentary_button_common_a(vpar,"+rot", lambda v: self._jog_periph(v,4,1))
-        self.but_feed_pound = self._momentary_button_common_a(vpar,"-rot", lambda v: self._jog_periph(v,4,-1))
-        self.but_feed_pound = self._momentary_button_common_a(vpar,"+up", lambda v: self._jog_periph(v,3,1))
-        self.but_feed_pound = self._momentary_button_common_a(vpar,"-down", lambda v: self._jog_periph(v,3,-1))
-
-        self.but_feed_pound = self._momentary_button_common_a(vpar,"home rot", lambda v: self._home_ax(v,4))
-        self.but_feed_pound = self._momentary_button_common_a(vpar,"home lift", lambda v: self._home_ax(v,3))
-        vpar.addStretch()"""
-
-
-
         grp_par = QtWidgets.QGroupBox("Осцилляторы")
         hctrl.addWidget(grp_par)
         vpar = QtWidgets.QVBoxLayout(grp_par)
@@ -663,7 +651,49 @@ class StringGUI(QtWidgets.QWidget):
 
         vpar.addStretch()
 
+        # ---  Prog Control Tab ---
+        tab_ctrl = QtWidgets.QWidget()
+        tabs.addTab(tab_ctrl, "Программа")
+        hctrl = QtWidgets.QHBoxLayout(tab_ctrl)
+        hctrl.setSpacing(spacing)
+        hctrl.setContentsMargins(25, 25, 25, 25)
+
         
+        grp_par = QtWidgets.QGroupBox("Траектория")
+        hctrl.addWidget(grp_par)
+        vpar = QtWidgets.QVBoxLayout(grp_par)        
+        vpar.setSpacing(spacing)        
+
+        self.viewer3d = GLWidget(self)
+        #self.viewer3d.setGeometry(QtCore.QRect(10, 10, 600, 600))
+        self.viewer3d.draw_start_frame(10.)
+        vpar.addWidget(self.viewer3d)
+
+        vpar.addStretch()
+
+
+        grp_par = QtWidgets.QGroupBox("Программа")
+        hctrl.addWidget(grp_par)
+        vpar = QtWidgets.QVBoxLayout(grp_par)        
+        vpar.setSpacing(spacing)     
+
+        self.textbox2:QtWidgets.QTextEdit = self._add_textbox_na(vpar,1.0)
+        
+        self.textbox2.setText("G1 X0 Y0 F600\n")
+        self.textbox2.setText(self.textbox.toPlainText()+"G1 X10 E4\n")
+        self.textbox2.setText(self.textbox.toPlainText()+"G1 X10 Y10 E8\n")
+        self.textbox2.setText(self.textbox.toPlainText()+"G1 X0 Y10 E12\n")
+        self.textbox2.setText(self.textbox.toPlainText()+"G1 X0 Y0 Z0 E12 F600\n")
+
+        self.but_feed_pound = self._momentary_button_common_a(vpar,"Загрузить прогр", lambda v: self._open_prog(v,self.textbox2))
+        self.but_feed_pound = self._toggle_button_common_a(vpar,"Запуск прогр", lambda v: self._start_prog(v,self.textbox2))
+        self.but_feed_pound = self._toggle_button_common_a(vpar,"Пауза", lambda v: self._start_prog(v))
+           
+        vpar.addStretch()
+
+
+        
+        #vpar.addStretch()
 
         # --- Setup 1 Control Tab ---
         tab_ctrl = QtWidgets.QWidget()
@@ -691,6 +721,51 @@ class StringGUI(QtWidgets.QWidget):
         #self.start_code()
 
     #------------TEST PROG FUNC-----------------------------------------
+
+    def _open_prog(self, val, textbox):
+        if val:
+            # Открываем диалог выбора файла
+            file_path, _ = QtWidgets.QFileDialog.getOpenFileName(
+                self,
+                "Выберите файл программы",
+                "",  # стартовая директория (пустая = текущая/последняя)
+                "G-code files (*.gcode *.nc *.txt);;All files (*)"
+            )
+
+            # Если пользователь отменил выбор — выходим
+            if not file_path:
+                return
+
+            try:
+                # Пробуем разные кодировки — на случай русских букв в файле
+                content = None
+                for enc in ("utf-8", "cp1251", "latin-1"):
+                    try:
+                        with open(file_path, "r", encoding=enc) as f:
+                            content = f.read()
+                        break
+                    except UnicodeDecodeError:
+                        continue
+
+                if content is None:
+                    raise IOError("Не удалось определить кодировку файла")
+
+                # Записываем содержимое в textbox
+                if content is not None:
+                    textbox.setPlainText(content)
+                    traj = self.viewer3d.parse_g_code(content)
+                    self.viewer3d.addLines(traj,1,0,0,1)
+
+            except Exception as e:
+                QtWidgets.QMessageBox.critical(
+                    self,
+                    "Ошибка открытия файла",
+                    f"Не удалось прочитать файл:\n{file_path}\n\n{e}"
+                )
+        else:
+            pass
+
+
     def _set_reley(self, val,ind):
         self._send_gcode(StringMashType.primary,f"M579 I{int(ind)} S{int(val)}")
 
@@ -726,10 +801,10 @@ class StringGUI(QtWidgets.QWidget):
         else:
             pass
 
-    def _start_prog(self, val):
+    def _start_prog(self, val,textbox):
         if val:
             self._send_gcode(StringMashType.primary,f"M598 0")
-            text_code = self.textbox.toPlainText()
+            text_code = textbox.toPlainText()
             lines = text_code.split('\n')
             for line in lines:
                 self._send_gcode(StringMashType.primary,f"M596 "+line)
@@ -769,58 +844,7 @@ class StringGUI(QtWidgets.QWidget):
         else:
             pass
 
-    # ------------------------- BUILD UI -------------------------
-    def _build_ui_rele(self) -> None:
-        #print("2")
-        tabs = QtWidgets.QTabWidget(self)
-        tabs.tabBar().setExpanding(True)
-        main_layout = QtWidgets.QVBoxLayout(self)
-        main_layout.addWidget(tabs)
-        spacing = 32
 
-        # --- Control Tab ---
-        tab_ctrl = QtWidgets.QWidget()
-        tabs.addTab(tab_ctrl, "Управление")
-        hctrl = QtWidgets.QHBoxLayout(tab_ctrl)
-        hctrl.setSpacing(spacing)
-        hctrl.setContentsMargins(25, 25, 25, 25)
-#--------------------------------------------------------------
-        # Actions
-        grp_act = QtWidgets.QGroupBox("1")
-        hctrl.addWidget(grp_act)
-        vact = QtWidgets.QVBoxLayout(grp_act)
-        vact.setSpacing(22)
-
-        self.cmb_port = QtWidgets.QComboBox()
-        # COM row
-        vact.addWidget(self._toggle_button("Установка 1", "a",StringMashType.rele))
-        vact.addWidget(self._toggle_button("Установка 2", "b",StringMashType.rele))
-        vact.addWidget(self._toggle_button("Установка 3", "c",StringMashType.rele))
-        vact.addWidget(self._toggle_button("Установка 4", "d",StringMashType.rele))
-        vact.addWidget(self._toggle_button("Установка 5", "e",StringMashType.rele))
-        vact.addWidget(self._toggle_button("Включить все", "W",StringMashType.rele))
-        vact.addStretch()
-#--------------------------------------------------------------
-        grp_act = QtWidgets.QGroupBox("2")
-        hctrl.addWidget(grp_act)
-        vact = QtWidgets.QVBoxLayout(grp_act)
-        vact.setSpacing(22)    
-
-        # Toggle buttons and actions
-        vact.addWidget(self._toggle_button("Установка 6", "f",StringMashType.rele))
-        vact.addWidget(self._toggle_button("Установка 7", "g",StringMashType.rele))
-        vact.addWidget(self._toggle_button("Установка 8", "h",StringMashType.rele))
-        vact.addWidget(self._toggle_button("Установка 9", "i",StringMashType.rele))
-        vact.addWidget(self._toggle_button("Установка 10", "j",StringMashType.rele))
-        vact.addWidget(self._toggle_button("Выключить все", "U",StringMashType.rele))
-        vact.addWidget(self._toggle_button_common("Выход",  QApplication.instance().quit))
-
-        vact.addStretch()
-#--------------------------------------------------------------
-
-
-        #print(bool(1), bool(0))
-        #self.start_code()
 
     def init_ui(self):
         if self.pos_thread_all is None: return
@@ -1363,9 +1387,9 @@ class StringGUI(QtWidgets.QWidget):
         # Текстовое поле
         textbox = QtWidgets.QTextEdit()
         textbox.setText(str(val))
-        textbox.setFixedWidth(400)
-        textbox.setFixedHeight(400)
-        textbox.setAlignment(Qt.AlignLeft) 
+        #textbox.setFixedWidth(400)
+        #textbox.setFixedHeight(400)
+        textbox.setAlignment(Qt.AlignCenter) 
         textbox.setStyleSheet(
             "QLineEdit {"
             "   background: #333;"
@@ -1404,6 +1428,8 @@ class StringGUI(QtWidgets.QWidget):
         
         pass
         #self.disconnect_serial()
+
+    
 
 def process_exists_windows(process_name):
     # Use tasklist command and capture output
