@@ -6,7 +6,6 @@ import time
 
 
 from Devices.StringMashPrimary import *
-from Devices.StringMashSercondary import *
 
         
 
@@ -23,7 +22,7 @@ class StringMashComp(TcpPort):
         self.string_move = 0
 
         self.all_data:list[StringStatePrimary] = [StringStatePrimary("")]
-        self.all_data_sec:list[StringStateSecondary] = [StringStateSecondary("")]
+        self.all_data_sec:list[StringStatePrimary] = [StringStatePrimary("")]
 
         self.gateway_vel = 0.0
         self.recuperator_vel = 0.0
@@ -70,19 +69,21 @@ class StringMashComp(TcpPort):
         for val in vals:
             #print(val)
             if "st1" in val:
-                #print("string")
+                #print("string1")
                 state = StringStatePrimary(val.strip(),self.all_data[-1])
                 if state.parsed:
                     self.all_data.append(state)
+                    #print(str(state))
                     if len(self.all_data)>1000:
                         self.all_data = [self.all_data[-1]]
 
 
             if "st2" in val:
-                #print("string")
-                state = StringStateSecondary(val.strip(),self.all_data_sec[-1])
+                #print("string2")
+                state = StringStatePrimary(val.strip(),self.all_data_sec[-1])
                 if state.parsed:
                     self.all_data_sec.append(state)
+                    #print(str(state))
                     if len(self.all_data_sec)>1000:
                         self.all_data_sec = [self.all_data_sec[-1]]
 

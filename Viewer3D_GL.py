@@ -486,7 +486,7 @@ class GLWidget(QOpenGLWidget):
         r =0.9
         g= 0.9
         b= 0.1
-        com_num = 28
+        com_num = -1
         cur_extr= 0
 
         for line in lines:       
@@ -495,7 +495,9 @@ class GLWidget(QOpenGLWidget):
             coords = line.split()
             if len(coords)>0:
                 if coords[0][0]=="G":
-                    com_num = int(coords[0][1:])
+                    substr = coords[0][1:]
+                    if "." not in substr and "," not in substr:
+                        com_num = int(substr)
                     
                     
                 if coords[0][0]=="T":

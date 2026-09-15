@@ -3,6 +3,7 @@ from Util.TcpPort import *
 from Util.UdpPort import *
 from Util.Gcomand import gcodeCom
 import time
+import copy
 
 TEST_PROG = True
 MAKET = True
@@ -28,11 +29,13 @@ class StringStatePrimary(object):
     y:float = 0.0
     z:float = 0.0
 
+    board_num:int = 0
+
     
 
     def __init__(self, data:str,state:"StringStatePrimary"=None):    
         self.parsed = False
-        if "st1" not in data: return
+        if "st" not in data: return
 
         #print(data)
         data = data.replace("'",'')
@@ -42,7 +45,11 @@ class StringStatePrimary(object):
         data = data.replace('  ',' ')
         data = data.split("s")[1]
 
-        data = data.replace('t1','')
+
+        self.board_num:int = int(data[1])
+        #print(self.board_num)
+
+        data = data.replace('t'+str(self.board_num),'')
         data = data.replace('  ',' ')
         data = data.replace('  ',' ')
         data = data.strip()
@@ -50,7 +57,7 @@ class StringStatePrimary(object):
         values = data.split(" ")
         if state is not None:
             self.clone(state)
-        #print(len(values))
+        #print(values)
         if len(values) > 13: 
 
             try:
@@ -94,9 +101,9 @@ class StringStatePrimary(object):
         #print(self)
 
     def clone(self,state:"StringStatePrimary"):
-        self.cur_pos = state.cur_pos
-        self.cur_end = state.cur_end
-        self.debug = state.debug
+        self.cur_pos = copy.deepcopy(state.cur_pos)
+        self.cur_end = copy.deepcopy(state.cur_end)
+        self.debug = copy.deepcopy(state.debug)
 
     
         self.cur_counter:int = state.cur_counter
@@ -110,6 +117,8 @@ class StringStatePrimary(object):
         self.x:float = state.x
         self.y:float = state.y
         self.z:float = state.z
+
+        self.board_num:float = state.board_num
 
         pass
 

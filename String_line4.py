@@ -359,7 +359,7 @@ class SaveThread(QtCore.QThread):
 
 
 class PosThreadAll(QtCore.QThread):
-    cur_state = QtCore.pyqtSignal(StringStatePrimary,StringStateSecondary)  # ()
+    cur_state = QtCore.pyqtSignal(StringStatePrimary,StringStatePrimary)  # ()
     
 
     def __init__(self,target_ip):
@@ -428,7 +428,7 @@ class StringGUI(QtWidgets.QWidget):
     BTN_W, BTN_H = BTN_W, BTN_H
     SLIDER_W = SLIDER_W
     string_mash:StringMashPrimary
-    string_mash_sec:StringMashSecondary
+    string_mash_sec:StringStatePrimary
 
     threads_cams:"list[CameraThread]" = [None,None,None]
     monitor_nums = [-1,-1,-1]
@@ -447,28 +447,11 @@ class StringGUI(QtWidgets.QWidget):
     def __init__(self) -> None:
         super().__init__(None, QtCore.Qt.Window)
         self.setWindowTitle("Printhead Controller – Touch UI")
-        self._apply_style()
-        if RELE_UI:
-            self._build_ui_rele()
-            self.update_serial_ports()
-            self.string_mash_rele = StringMash(self.cmb_port.itemText(0), 250000)#4531
-
-        else:
-            self._build_ui()
-            self.resize(1920, 1080)
-            if CAMERAS_OPEN:
-                #time.sleep(3)
-                pass
-            time.sleep(0.5)
-
-            if not MAKET:
-                self.init_ui()
+        self._apply_style()        
+        self._build_ui()
+        self.resize(1920, 1080)
 
 
-            #time.sleep(3)
-          
-        #self._start_camera_pound_before()
-        
     # ------------------------- STYLE -------------------------
     def _apply_style(self) -> None:
         self.setStyleSheet(
@@ -525,6 +508,11 @@ class StringGUI(QtWidgets.QWidget):
         self.lbl_state_main.setText('\n\n\n\nОбъём вверх\nОбъём вверх\nОбъём вверх\nОбъём вверх\nОбъём вверх\nОбъём вверх\nОбъём вверх\nОбъём вверх\n')
         hctrl.addWidget(self.lbl_state_main)
 
+        self.lbl_state_sec =  QtWidgets.QLabel()
+        self.lbl_state_sec.setAlignment(Qt.AlignTop)
+        self.lbl_state_sec.setText('\n\n\n\nОбъём вверх\nОбъём вверх\nОбъём вверх\nОбъём вверх\nОбъём вверх\nОбъём вверх\nОбъём вверх\nОбъём вверх\n')
+        hctrl.addWidget(self.lbl_state_sec)
+
         grp_par = QtWidgets.QGroupBox("Авто")
         hctrl.addWidget(grp_par)
         vpar = QtWidgets.QVBoxLayout(grp_par)
@@ -567,6 +555,11 @@ class StringGUI(QtWidgets.QWidget):
         self.lbl_state_main2.setText('\n\n\n\nОбъём вверх\nОбъём вверх\nОбъём вверх\nОбъём вверх\nОбъём вверх\nОбъём вверх\nОбъём вверх\nОбъём вверх\n')
         hctrl.addWidget(self.lbl_state_main2)
 
+        self.lbl_state_sec2 =  QtWidgets.QLabel()
+        self.lbl_state_sec2.setAlignment(Qt.AlignTop)
+        self.lbl_state_sec2.setText('\n\n\n\nОбъём вверх\nОбъём вверх\nОбъём вверх\nОбъём вверх\nОбъём вверх\nОбъём вверх\nОбъём вверх\nОбъём вверх\n')
+        hctrl.addWidget(self.lbl_state_sec2)
+
         # Parameters
         grp_par = QtWidgets.QGroupBox("Осцилляторы")
         hctrl.addWidget(grp_par)
@@ -577,27 +570,27 @@ class StringGUI(QtWidgets.QWidget):
         self.lbl.setText('\nОсциллятор 1\n')
         vpar.addWidget(self.lbl)
 
-        self.but_feed_pound = self._momentary_button_common_a(vpar,"+rot", lambda v: self._jog_periph(v,4,1))
-        self.but_feed_pound = self._momentary_button_common_a(vpar,"-rot", lambda v: self._jog_periph(v,4,-1))
-        self.but_feed_pound = self._momentary_button_common_a(vpar,"+up", lambda v: self._jog_periph(v,3,1))
-        self.but_feed_pound = self._momentary_button_common_a(vpar,"-down", lambda v: self._jog_periph(v,3,-1))
+        self.but_feed_pound = self._momentary_button_common_a(vpar,"+rot", lambda v: self._jog_periph(v,4,1,1))
+        self.but_feed_pound = self._momentary_button_common_a(vpar,"-rot", lambda v: self._jog_periph(v,4,-1,1))
+        self.but_feed_pound = self._momentary_button_common_a(vpar,"+up", lambda v: self._jog_periph(v,3,1,1))
+        self.but_feed_pound = self._momentary_button_common_a(vpar,"-down", lambda v: self._jog_periph(v,3,-1,1))
         self._add_slider_na(vpar,"serv_1","",40,240,120, lambda v: self._servo_rot(v,0))
 
-        self.but_feed_pound = self._momentary_button_common_a(vpar,"home rot", lambda v: self._home_ax(v,4))
-        self.but_feed_pound = self._momentary_button_common_a(vpar,"home lift", lambda v: self._home_ax(v,3))
+        self.but_feed_pound = self._momentary_button_common_a(vpar,"home rot", lambda v: self._home_ax(v,4,1))
+        self.but_feed_pound = self._momentary_button_common_a(vpar,"home lift", lambda v: self._home_ax(v,3,1))
 
         self.lbl2 =  QtWidgets.QLabel()
         self.lbl2.setAlignment(Qt.AlignTop)
         self.lbl2.setText('\nОсциллятор 2\n')
         vpar.addWidget(self.lbl2)
-        self.but_feed_pound = self._momentary_button_common_a(vpar,"+rot", lambda v: self._jog_periph(v,6,1))
-        self.but_feed_pound = self._momentary_button_common_a(vpar,"-rot", lambda v: self._jog_periph(v,6,-1))
-        self.but_feed_pound = self._momentary_button_common_a(vpar,"+up", lambda v: self._jog_periph(v,5,1))
-        self.but_feed_pound = self._momentary_button_common_a(vpar,"-down", lambda v: self._jog_periph(v,5,-1))
+        self.but_feed_pound = self._momentary_button_common_a(vpar,"+rot", lambda v: self._jog_periph(v,6,1,1))
+        self.but_feed_pound = self._momentary_button_common_a(vpar,"-rot", lambda v: self._jog_periph(v,6,-1,1))
+        self.but_feed_pound = self._momentary_button_common_a(vpar,"+up", lambda v: self._jog_periph(v,5,1,1))
+        self.but_feed_pound = self._momentary_button_common_a(vpar,"-down", lambda v: self._jog_periph(v,5,-1,1))
         self._add_slider_na(vpar,"serv_2","",40,240,120, lambda v: self._servo_rot(v,1))
 
-        self.but_feed_pound = self._momentary_button_common_a(vpar,"home rot", lambda v: self._home_ax(v,6))
-        self.but_feed_pound = self._momentary_button_common_a(vpar,"home lift", lambda v: self._home_ax(v,5))
+        self.but_feed_pound = self._momentary_button_common_a(vpar,"home rot", lambda v: self._home_ax(v,6,1))
+        self.but_feed_pound = self._momentary_button_common_a(vpar,"home lift", lambda v: self._home_ax(v,5,1))
         vpar.addStretch()
 
 
@@ -611,37 +604,37 @@ class StringGUI(QtWidgets.QWidget):
         self.lbl3.setText('\nМанипулятор 1\n')
         vpar.addWidget(self.lbl3)
         
-        self.but_feed_pound = self._momentary_button_common_a(vpar,"+rot", lambda v: self._jog_periph(v,3,1))
-        self.but_feed_pound = self._momentary_button_common_a(vpar,"-rot", lambda v: self._jog_periph(v,3,-1))
-        self.but_feed_pound = self._momentary_button_common_a(vpar,"+up", lambda v: self._jog_periph(v,4,1))
-        self.but_feed_pound = self._momentary_button_common_a(vpar,"-down", lambda v: self._jog_periph(v,4,-1))
+        self.but_feed_pound = self._momentary_button_common_a(vpar,"+rot", lambda v: self._jog_periph(v,3,1,2))
+        self.but_feed_pound = self._momentary_button_common_a(vpar,"-rot", lambda v: self._jog_periph(v,3,-1,2))
+        self.but_feed_pound = self._momentary_button_common_a(vpar,"+up", lambda v: self._jog_periph(v,4,1,2))
+        self.but_feed_pound = self._momentary_button_common_a(vpar,"-down", lambda v: self._jog_periph(v,4,-1,2))
 
-        self.but_feed_pound = self._momentary_button_common_a(vpar,"home rot", lambda v: self._home_ax(v,3))
-        self.but_feed_pound = self._momentary_button_common_a(vpar,"home lift", lambda v: self._home_ax(v,4))
+        self.but_feed_pound = self._momentary_button_common_a(vpar,"home rot", lambda v: self._home_ax(v,3,2))
+        self.but_feed_pound = self._momentary_button_common_a(vpar,"home lift", lambda v: self._home_ax(v,4,2))
 
         self.lbl4 =  QtWidgets.QLabel()
         self.lbl4.setAlignment(Qt.AlignTop)
         self.lbl4.setText('\nМанипулятор 2\n')
         vpar.addWidget(self.lbl4)
         
-        self.but_feed_pound = self._momentary_button_common_a(vpar,"+rot", lambda v: self._jog_periph(v,5,1))
-        self.but_feed_pound = self._momentary_button_common_a(vpar,"-rot", lambda v: self._jog_periph(v,5,-1))
-        self.but_feed_pound = self._momentary_button_common_a(vpar,"+up", lambda v: self._jog_periph(v,6,1))
-        self.but_feed_pound = self._momentary_button_common_a(vpar,"-down", lambda v: self._jog_periph(v,6,-1))
+        self.but_feed_pound = self._momentary_button_common_a(vpar,"+rot", lambda v: self._jog_periph(v,5,1,2))
+        self.but_feed_pound = self._momentary_button_common_a(vpar,"-rot", lambda v: self._jog_periph(v,5,-1,2))
+        self.but_feed_pound = self._momentary_button_common_a(vpar,"+up", lambda v: self._jog_periph(v,6,1,2))
+        self.but_feed_pound = self._momentary_button_common_a(vpar,"-down", lambda v: self._jog_periph(v,6,-1,2))
 
-        self.but_feed_pound = self._momentary_button_common_a(vpar,"home rot", lambda v: self._home_ax(v,5))
-        self.but_feed_pound = self._momentary_button_common_a(vpar,"home lift", lambda v: self._home_ax(v,6))
+        self.but_feed_pound = self._momentary_button_common_a(vpar,"home rot", lambda v: self._home_ax(v,5,2))
+        self.but_feed_pound = self._momentary_button_common_a(vpar,"home lift", lambda v: self._home_ax(v,6,2))
         vpar.addStretch()
 
         grp_par = QtWidgets.QGroupBox("Система подачи")
         hctrl.addWidget(grp_par)
         vpar = QtWidgets.QVBoxLayout(grp_par)
         vpar.setSpacing(spacing)
-        self.but_feed_pound = self._momentary_button_common_a(vpar,"+x", lambda v: self._jog_periph(v,0,1))
-        self.but_feed_pound = self._momentary_button_common_a(vpar,"-x", lambda v: self._jog_periph(v,0,-1))
+        self.but_feed_pound = self._momentary_button_common_a(vpar,"+x", lambda v: self._jog_periph(v,0,1,2))
+        self.but_feed_pound = self._momentary_button_common_a(vpar,"-x", lambda v: self._jog_periph(v,0,-1,2))
 
-        self.but_feed_pound = self._momentary_button_common_a(vpar,"up", lambda v: self._jog_periph(v,2,1))
-        self.but_feed_pound = self._momentary_button_common_a(vpar,"down", lambda v: self._jog_periph(v,2,-1))
+        self.but_feed_pound = self._momentary_button_common_a(vpar,"up", lambda v: self._jog_periph(v,2,1,2))
+        self.but_feed_pound = self._momentary_button_common_a(vpar,"down", lambda v: self._jog_periph(v,2,-1,2))
         self._add_slider_na(vpar,"Temp: ","C",20,240,37, lambda v: self._set_heater_val(v))
         self.but_feed_pound = self._toggle_button_common_a(vpar,"Нагрев", lambda v: self._set_heater_en(v))
 
@@ -724,20 +717,17 @@ class StringGUI(QtWidgets.QWidget):
 
     def _open_prog(self, val, textbox):
         if val:
-            # Открываем диалог выбора файла
             file_path, _ = QtWidgets.QFileDialog.getOpenFileName(
                 self,
                 "Выберите файл программы",
-                "",  # стартовая директория (пустая = текущая/последняя)
+                "", 
                 "G-code files (*.gcode *.nc *.txt);;All files (*)"
             )
 
-            # Если пользователь отменил выбор — выходим
             if not file_path:
                 return
 
             try:
-                # Пробуем разные кодировки — на случай русских букв в файле
                 content = None
                 for enc in ("utf-8", "cp1251", "latin-1"):
                     try:
@@ -767,80 +757,82 @@ class StringGUI(QtWidgets.QWidget):
 
 
     def _set_reley(self, val,ind):
-        self._send_gcode(StringMashType.primary,f"M579 I{int(ind)} S{int(val)}")
+        self._send_gcode(StringMashType.primary,f"num1 M579 I{int(ind)} S{int(val)}")
 
     def _set_heater_en(self, val):
         if val:
-            self._send_gcode(StringMashType.primary,f"M579 E1")
+            self._send_gcode(StringMashType.primary,f"num1 M579 E1")
         else:
-            self._send_gcode(StringMashType.primary,f"M579 E0")
+            self._send_gcode(StringMashType.primary,f"num1 M579 E0")
 
 
     def _set_heater_val(self, val):
-        self._send_gcode(StringMashType.primary,f"M579 T{int(val)}")
+        self._send_gcode(StringMashType.primary,f"num1 M579 T{int(val)}")
 
     def _servo_rot(self, val,ind):
-        self._send_gcode(StringMashType.primary,f"M577 I{ind} V{int(val)}")
+        self._send_gcode(StringMashType.primary,f"num1 M577 I{ind} V{int(val)}")
 
 
     def _jog_bool(self, val, type):
         if val:
-            self._send_gcode(StringMashType.primary,f"M611 {int(type)}")
+            self._send_gcode(StringMashType.primary,f"main M611 {int(type)}")
         else:
-            self._send_gcode(StringMashType.primary,f"M597 2")
+            self._send_gcode(StringMashType.primary,f"main M597 2")
 
-    def _jog_periph(self, val, type, dir):
+    def _jog_periph(self, val, type, dir, num):
         if val:
-            self._send_gcode(StringMashType.primary,f"M587 I{int(type)} S{int(100000*dir)}")
+            self._send_gcode(StringMashType.primary,f"num{str(num)} M587 I{int(type)} S{int(100000*dir)}")
         else:
-            self._send_gcode(StringMashType.primary,f"M587 I{int(type)} S0")
+            self._send_gcode(StringMashType.primary,f"num{str(num)} M587 I{int(type)} S0")
 
-    def _home_ax(self, val, type):
+
+
+    def _home_ax(self, val, type, num):
         if val:
-            self._send_gcode(StringMashType.primary,f"M587 I{int(type)} H")
+            self._send_gcode(StringMashType.primary,f"num{str(num)} M587 I{int(type)} H")
         else:
             pass
 
     def _start_prog(self, val,textbox):
         if val:
-            self._send_gcode(StringMashType.primary,f"M598 0")
+            self._send_gcode(StringMashType.primary,f"main M598 0")
             text_code = textbox.toPlainText()
             lines = text_code.split('\n')
             for line in lines:
-                self._send_gcode(StringMashType.primary,f"M596 "+line)
+                self._send_gcode(StringMashType.primary,f"main M596 "+line)
 
-            self._send_gcode(StringMashType.primary,f"M597 0")
+            self._send_gcode(StringMashType.primary,f"main M597 0")
         else:
-            self._send_gcode(StringMashType.primary,f"M597 2")
+            self._send_gcode(StringMashType.primary,f"main M597 2")
 
     def _set_zero_p(self, val):
         if val:
-            self._send_gcode(StringMashType.primary,f"M612")
+            self._send_gcode(StringMashType.primary,f"main M612")
         else:
             pass
 
     def _set_settings(self, val):
         if val:
-            self._send_gcode(StringMashType.primary,f"M614")
+            self._send_gcode(StringMashType.primary,f"main M614")
         else:
             pass
 
     def _set_home(self, val):
         if val:
-            self._send_gcode(StringMashType.primary,f"M589 X40")
+            self._send_gcode(StringMashType.primary,f"num1 M589 X40")
         else:
             pass
                 #self._send_gcode(StringMashType.primary,f"M597 2")
 
     def _set_home_test(self, val):
         if val:
-            self._send_gcode(StringMashType.primary,f"M589 Y40")
+            self._send_gcode(StringMashType.primary,f"num1 M589 Y40")
         else:
             pass
 
     def _set_delta_calibr(self, val):
         if val:
-            self._send_gcode(StringMashType.primary,f"M613 18")
+            self._send_gcode(StringMashType.primary,f"main M613 18")
         else:
             pass
 
@@ -993,107 +985,15 @@ class StringGUI(QtWidgets.QWidget):
         #self.lbl_dia.setText(f"Диаметр: {dia[0]:.1f} мм" if dia[0] >= 0 else "Диаметр: -- мм")
 
 
-    # ----------------------- G-CODE SENDING ----------------------
-    def force_set(self,v):
-        self._send_gcode(StringMashType.primary,f"M584 J{-v:.2f} L1 I0")
+ 
 
-    def start_code(self):
-        pass
-#-------MICROSC E-------------------------------------
-    def home_microscope_e(self,v):
-        self._send_gcode(StringMashType.secondary,"M585 C G")
-
-    def pose_1_microscope_e(self,v):
-        self._send_gcode(StringMashType.secondary,"M585 C P0")
-    def pose_2_microscope_e(self,v):
-        self._send_gcode(StringMashType.secondary,"M585 C P1")
-    def pose_3_microscope_e(self,v):
-        self._send_gcode(StringMashType.secondary,"M585 C P2")
-    def pose_4_microscope_e(self,v):
-        self._send_gcode(StringMashType.secondary,"M585 C P3")
-    def pose_5_microscope_e(self,v):
-        self._send_gcode(StringMashType.secondary,"M585 C P4")
-    
-
-    def light_microscope_e(self,v):
-        self._send_gcode(StringMashType.secondary,"M585 C R"+str(int(v)))
-
-
-    def set_pos_depth_microscope_e(self,v:float):
-        self._send_gcode(StringMashType.secondary,f"M585 C V{v:.2f}")
-
-    def set_pos_betw_string_microscope_e(self,v:float):
-        self._send_gcode(StringMashType.secondary,f"M585 C H{v:.2f}")
-
-
-#-------MICROSC D-------------------------------------
-
-
-        #self._send_gcode(StringMashType.secondary,"M585 A P0")
-    
-    def home_microscope_d(self,v):
-        self._send_gcode(StringMashType.secondary,"M585 A G")
-
-    def pose_1_microscope_d(self,v):
-        self._send_gcode(StringMashType.secondary,"M585 A P0")
-    def pose_2_microscope_d(self,v):
-        self._send_gcode(StringMashType.secondary,"M585 A P1")
-    def pose_3_microscope_d(self,v):
-        self._send_gcode(StringMashType.secondary,"M585 A P2")
-    def pose_4_microscope_d(self,v):
-        self._send_gcode(StringMashType.secondary,"M585 A P3")
-    def pose_5_microscope_d(self,v):
-        self._send_gcode(StringMashType.secondary,"M585 A P4")
-
-    def light_microscope_d(self,v):
-        self._send_gcode(StringMashType.secondary,"M585 A R"+str(int(v)))
-    
-    def set_pos_depth_microscope_d(self,v:float):
-        self._send_gcode(StringMashType.secondary,f"M585 A V{v:.2f}")
-
-    def set_pos_betw_string_microscope_d(self,v:float):
-        self._send_gcode(StringMashType.secondary,f"M585 A H{v:.2f}")
-
-    
-
-#-------------------------------------------------
-
-    def tare_string(self,val):
-
-        num = StringStatePrimary.tens_num
-
-        f_off = [0]*num
-
-        for i in range(num):
-            self._send_gcode(StringMashType.primary,f"M584 I{i} O{f_off[i]} P1")
-            time.sleep(0.02)
-
-
-        time.sleep(0.2)
-
-        for i in range(num):
-            f_off[i] =  self.pos_thread_all.string_mash.all_data[-1].force_string1[i]
-            self._send_gcode(StringMashType.primary,f"M584 I{i} O{f_off[i]} P1")
-            time.sleep(0.02)
-
-        self.tared = True
-
-        self._send_gcode(StringMashType.primary,f"M578 A{int(val)}")
-
-        pass
-
-    def change_string_vel(self, v):
-
-        pass
-
-    def _update_state(self, state1: StringStatePrimary, state2: StringStateSecondary) -> None: 
+    def _update_state(self, state1: StringStatePrimary, state2: StringStatePrimary) -> None: 
         #self.lbl_state.setText("_____________Состояние\n"+str(state1)+"\n")
         self.lbl_state_main.setText("\n\n\n\nСостояние\n"+str(state1))
         self.lbl_state_main2.setText("\n\n\n\nСостояние\n"+str(state1))
-        #self.lbl_state_sec.setText("\n\n\n\nСостояние"+str(state2))
+        self.lbl_state_sec.setText("\n\n\n\nСостояние\n"+str(state2))
+        self.lbl_state_sec2.setText("\n\n\n\nСостояние\n"+str(state2))
 
-    def _update_state_sec(self, state: StringStateSecondary) -> None:
-        self.lbl_state_sec.setText("\n\n\n\nСостояние"+str(state))
 
     def update_serial_ports(self):
         self.cmb_port.clear()
