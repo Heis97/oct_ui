@@ -523,6 +523,7 @@ class StringGUI(QtWidgets.QWidget):
         self.but_feed_pound = self._toggle_button_common_a(vpar,"Home_test", lambda v: self._set_home_test(v))
         self.but_feed_pound = self._toggle_button_common_a(vpar,"Delta calibrate", lambda v: self._set_delta_calibr(v))
         self.but_feed_pound = self._toggle_button_common_a(vpar,"Уст. т. 0", lambda v: self._set_zero_p(v))
+        self.but_feed_pound = self._toggle_button_common_a(vpar,"Передвиж в т. 0", lambda v: self._move_zero_p(v))
         self.but_feed_pound = self._toggle_button_common_a(vpar,"Загрузить настройки", lambda v: self._set_settings(v))
 
         vpar.addStretch()
@@ -535,10 +536,10 @@ class StringGUI(QtWidgets.QWidget):
         self.but_feed_pound = self._momentary_button_common_a(vpar,"-X", lambda v: self._jog_bool(v,1))
         self.but_feed_pound = self._momentary_button_common_a(vpar,"+Y", lambda v: self._jog_bool(v,2))
         self.but_feed_pound = self._momentary_button_common_a(vpar,"-Y", lambda v: self._jog_bool(v,3))
-        self.but_feed_pound = self._momentary_button_common_a(vpar,"+Z", lambda v: self._jog_bool(v,4))
-        self.but_feed_pound = self._momentary_button_common_a(vpar,"-Z", lambda v: self._jog_bool(v,5))
-        self.but_feed_pound = self._momentary_button_common_a(vpar,"+E", lambda v: self._jog_bool(v,6))
-        self.but_feed_pound = self._momentary_button_common_a(vpar,"-E", lambda v: self._jog_bool(v,7))
+        self.but_feed_pound = self._momentary_button_common_a(vpar,"+Z", lambda v: self._jog_direct_steps_vel(v,1))
+        self.but_feed_pound = self._momentary_button_common_a(vpar,"-Z", lambda v: self._jog_direct_steps_vel(v,-1))
+        self.but_feed_pound = self._momentary_button_common_a(vpar,"+E", lambda v: self._jog_periph(v,7, 1,1))
+        self.but_feed_pound = self._momentary_button_common_a(vpar,"-E", lambda v: self._jog_periph(v,7,-1,1))
         
 
         vpar.addStretch()
@@ -604,44 +605,61 @@ class StringGUI(QtWidgets.QWidget):
         self.lbl3.setText('\nМанипулятор 1\n')
         vpar.addWidget(self.lbl3)
         
-        self.but_feed_pound = self._momentary_button_common_a(vpar,"+rot", lambda v: self._jog_periph(v,3,1,2))
-        self.but_feed_pound = self._momentary_button_common_a(vpar,"-rot", lambda v: self._jog_periph(v,3,-1,2))
-        self.but_feed_pound = self._momentary_button_common_a(vpar,"+up", lambda v: self._jog_periph(v,4,1,2))
-        self.but_feed_pound = self._momentary_button_common_a(vpar,"-down", lambda v: self._jog_periph(v,4,-1,2))
+        self.but_feed_pound = self._momentary_button_common_a(vpar,"+rot", lambda v: self._jog_periph(v,4,1,2))
+        self.but_feed_pound = self._momentary_button_common_a(vpar,"-rot", lambda v: self._jog_periph(v,4,-1,2))
+        self.but_feed_pound = self._momentary_button_common_a(vpar,"+up", lambda v: self._jog_periph(v,3,1,2))
+        self.but_feed_pound = self._momentary_button_common_a(vpar,"-down", lambda v: self._jog_periph(v,3,-1,2))
 
-        self.but_feed_pound = self._momentary_button_common_a(vpar,"home rot", lambda v: self._home_ax(v,3,2))
-        self.but_feed_pound = self._momentary_button_common_a(vpar,"home lift", lambda v: self._home_ax(v,4,2))
+        self.but_feed_pound = self._momentary_button_common_a(vpar,"home rot", lambda v: self._home_ax(v,4,2))
+        self.but_feed_pound = self._momentary_button_common_a(vpar,"home lift", lambda v: self._home_ax(v,3,2))
 
         self.lbl4 =  QtWidgets.QLabel()
         self.lbl4.setAlignment(Qt.AlignTop)
         self.lbl4.setText('\nМанипулятор 2\n')
         vpar.addWidget(self.lbl4)
         
-        self.but_feed_pound = self._momentary_button_common_a(vpar,"+rot", lambda v: self._jog_periph(v,5,1,2))
-        self.but_feed_pound = self._momentary_button_common_a(vpar,"-rot", lambda v: self._jog_periph(v,5,-1,2))
-        self.but_feed_pound = self._momentary_button_common_a(vpar,"+up", lambda v: self._jog_periph(v,6,1,2))
-        self.but_feed_pound = self._momentary_button_common_a(vpar,"-down", lambda v: self._jog_periph(v,6,-1,2))
+        self.but_feed_pound = self._momentary_button_common_a(vpar,"+rot", lambda v: self._jog_periph(v,6,1,2))
+        self.but_feed_pound = self._momentary_button_common_a(vpar,"-rot", lambda v: self._jog_periph(v,6,-1,2))
+        self.but_feed_pound = self._momentary_button_common_a(vpar,"+up", lambda v: self._jog_periph(v,5,1,2))
+        self.but_feed_pound = self._momentary_button_common_a(vpar,"-down", lambda v: self._jog_periph(v,5,-1,2))
 
-        self.but_feed_pound = self._momentary_button_common_a(vpar,"home rot", lambda v: self._home_ax(v,5,2))
-        self.but_feed_pound = self._momentary_button_common_a(vpar,"home lift", lambda v: self._home_ax(v,6,2))
+        self.but_feed_pound = self._momentary_button_common_a(vpar,"home rot", lambda v: self._home_ax(v,6,2))
+        self.but_feed_pound = self._momentary_button_common_a(vpar,"home lift", lambda v: self._home_ax(v,5,2))
         vpar.addStretch()
 
         grp_par = QtWidgets.QGroupBox("Система подачи")
         hctrl.addWidget(grp_par)
         vpar = QtWidgets.QVBoxLayout(grp_par)
         vpar.setSpacing(spacing)
-        self.but_feed_pound = self._momentary_button_common_a(vpar,"+x", lambda v: self._jog_periph(v,0,1,2))
-        self.but_feed_pound = self._momentary_button_common_a(vpar,"-x", lambda v: self._jog_periph(v,0,-1,2))
+        self.but_feed_pound = self._momentary_button_common_a(vpar,"table out", lambda v: self._jog_periph(v,0,1,2))
+        self.but_feed_pound = self._momentary_button_common_a(vpar,"table in", lambda v: self._jog_periph(v,0,-1,2))
 
         self.but_feed_pound = self._momentary_button_common_a(vpar,"up", lambda v: self._jog_periph(v,2,1,2))
         self.but_feed_pound = self._momentary_button_common_a(vpar,"down", lambda v: self._jog_periph(v,2,-1,2))
-        self._add_slider_na(vpar,"Temp: ","C",20,240,37, lambda v: self._set_heater_val(v))
+
+        self.but_feed_pound = self._momentary_button_common_a(vpar,"table home", lambda v: self._home_ax(v,0,2))
+        
+        self._add_slider_na(vpar,"Temp: ","C",20,50,37, lambda v: self._set_heater_val(v))
         self.but_feed_pound = self._toggle_button_common_a(vpar,"Нагрев", lambda v: self._set_heater_en(v))
+        self.but_feed_pound = self._toggle_button_common_a(vpar,"Насос", lambda v: self._set_reley(v,0))
+        self.but_feed_pound = self._toggle_button_common_a(vpar,"Стол", lambda v: self._set_reley(v,1))
+        self.but_feed_pound = self._toggle_button_common_a(vpar,"Крышка", lambda v: self._set_reley(v,2))
+        self.but_feed_pound = self._toggle_button_common_a(vpar,"Сброс", lambda v: self._set_reley(v,3))
 
-        self.but_feed_pound = self._toggle_button_common_a(vpar,"Стол", lambda v: self._set_reley(v,0))
-        self.but_feed_pound = self._toggle_button_common_a(vpar,"Крышка", lambda v: self._set_reley(v,1))
-        self.but_feed_pound = self._toggle_button_common_a(vpar,"Сброс", lambda v: self._set_reley(v,2))
+        vpar.addStretch()
 
+        grp_par = QtWidgets.QGroupBox("Ручн")
+        hctrl.addWidget(grp_par)
+        vpar = QtWidgets.QVBoxLayout(grp_par)
+        vpar.setSpacing(spacing)
+        self.but_feed_pound = self._momentary_button_common_a(vpar,"+X", lambda v: self._jog_bool(v,0))
+        self.but_feed_pound = self._momentary_button_common_a(vpar,"-X", lambda v: self._jog_bool(v,1))
+        self.but_feed_pound = self._momentary_button_common_a(vpar,"+Y", lambda v: self._jog_bool(v,2))
+        self.but_feed_pound = self._momentary_button_common_a(vpar,"-Y", lambda v: self._jog_bool(v,3))
+        self.but_feed_pound = self._momentary_button_common_a(vpar,"+Z", lambda v: self._jog_direct_steps_vel(v,1))
+        self.but_feed_pound = self._momentary_button_common_a(vpar,"-Z", lambda v: self._jog_direct_steps_vel(v,-1))
+        self.but_feed_pound = self._momentary_button_common_a(vpar,"+E", lambda v: self._jog_periph(v,7, 1,1))
+        self.but_feed_pound = self._momentary_button_common_a(vpar,"-E", lambda v: self._jog_periph(v,7,-1,1))
         vpar.addStretch()
 
         # ---  Prog Control Tab ---
@@ -757,17 +775,17 @@ class StringGUI(QtWidgets.QWidget):
 
 
     def _set_reley(self, val,ind):
-        self._send_gcode(StringMashType.primary,f"num1 M579 I{int(ind)} S{int(val)}")
+        self._send_gcode(StringMashType.primary,f"num2 M579 I{int(ind)} S{int(val)}")
 
     def _set_heater_en(self, val):
         if val:
-            self._send_gcode(StringMashType.primary,f"num1 M579 E1")
+            self._send_gcode(StringMashType.primary,f"num2 M579 E1")
         else:
-            self._send_gcode(StringMashType.primary,f"num1 M579 E0")
+            self._send_gcode(StringMashType.primary,f"num2 M579 E0")
 
 
     def _set_heater_val(self, val):
-        self._send_gcode(StringMashType.primary,f"num1 M579 T{int(val)}")
+        self._send_gcode(StringMashType.primary,f"num2 M579 T{int(val)}")
 
     def _servo_rot(self, val,ind):
         self._send_gcode(StringMashType.primary,f"num1 M577 I{ind} V{int(val)}")
@@ -778,6 +796,13 @@ class StringGUI(QtWidgets.QWidget):
             self._send_gcode(StringMashType.primary,f"main M611 {int(type)}")
         else:
             self._send_gcode(StringMashType.primary,f"main M597 2")
+
+
+    def _jog_direct_steps_vel(self, val, type):
+        if val:
+            self._send_gcode(StringMashType.primary,f"num1 M589 Z0.1 E{int(type)}")
+        else:
+            self._send_gcode(StringMashType.primary,f"num1 M589 Z0 E0")
 
     def _jog_periph(self, val, type, dir, num):
         if val:
@@ -795,11 +820,14 @@ class StringGUI(QtWidgets.QWidget):
 
     def _start_prog(self, val,textbox):
         if val:
+            self._send_gcode(StringMashType.primary,f"num1 M587 I7 C0")
             self._send_gcode(StringMashType.primary,f"main M598 0")
+
             text_code = textbox.toPlainText()
             lines = text_code.split('\n')
             for line in lines:
                 self._send_gcode(StringMashType.primary,f"main M596 "+line)
+
 
             self._send_gcode(StringMashType.primary,f"main M597 0")
         else:
@@ -811,6 +839,12 @@ class StringGUI(QtWidgets.QWidget):
         else:
             pass
 
+    def _move_zero_p(self, val):
+        if val:
+            self._send_gcode(StringMashType.primary,f"main M615")
+        else:
+            pass
+
     def _set_settings(self, val):
         if val:
             self._send_gcode(StringMashType.primary,f"main M614")
@@ -819,7 +853,7 @@ class StringGUI(QtWidgets.QWidget):
 
     def _set_home(self, val):
         if val:
-            self._send_gcode(StringMashType.primary,f"num1 M589 X40")
+            self._send_gcode(StringMashType.primary,f"num1 M589 X10")
         else:
             pass
                 #self._send_gcode(StringMashType.primary,f"M597 2")
