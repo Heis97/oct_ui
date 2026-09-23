@@ -498,10 +498,10 @@ class StringGUI(QtWidgets.QWidget):
         self.textbox:QtWidgets.QTextEdit = self._add_textbox_na(vpar,1.0)
         
         self.textbox.setText("G1 X0 Y0 F600\n")
-        self.textbox.setText(self.textbox.toPlainText()+"G1 X10 E4\n")
-        self.textbox.setText(self.textbox.toPlainText()+"G1 X10 Y10 E8\n")
-        self.textbox.setText(self.textbox.toPlainText()+"G1 X0 Y10 E12\n")
-        self.textbox.setText(self.textbox.toPlainText()+"G1 X0 Y0 Z0 E12 F600\n")
+        self.textbox.setText(self.textbox.toPlainText()+"G1 X10 E0.1\n")
+        self.textbox.setText(self.textbox.toPlainText()+"G1 X10 Y10 E0.2\n")
+        self.textbox.setText(self.textbox.toPlainText()+"G1 X0 Y10 E0.3\n")
+        self.textbox.setText(self.textbox.toPlainText()+"G1 X0 Y0 Z0 E0.5 F600\n")
 
         self.lbl_state_main =  QtWidgets.QLabel()
         self.lbl_state_main.setAlignment(Qt.AlignTop)
@@ -520,8 +520,7 @@ class StringGUI(QtWidgets.QWidget):
         self.but_feed_pound = self._toggle_button_common_a(vpar,"Запуск прогр", lambda v: self._start_prog(v,self.textbox))
         self.but_feed_pound = self._toggle_button_common_a(vpar,"Пауза", lambda v: self._start_prog(v,self.textbox))
         self.but_feed_pound = self._toggle_button_common_a(vpar,"Home", lambda v: self._set_home(v))
-        self.but_feed_pound = self._toggle_button_common_a(vpar,"Home_test", lambda v: self._set_home_test(v))
-        self.but_feed_pound = self._toggle_button_common_a(vpar,"Delta calibrate", lambda v: self._set_delta_calibr(v))
+        
         self.but_feed_pound = self._toggle_button_common_a(vpar,"Уст. т. 0", lambda v: self._set_zero_p(v))
         self.but_feed_pound = self._toggle_button_common_a(vpar,"Передвиж в т. 0", lambda v: self._move_zero_p(v))
         self.but_feed_pound = self._toggle_button_common_a(vpar,"Загрузить настройки", lambda v: self._set_settings(v))
@@ -719,6 +718,24 @@ class StringGUI(QtWidgets.QWidget):
         vpar = QtWidgets.QVBoxLayout(grp_par)
         vpar.setSpacing(spacing)
 
+        self.but_feed_pound = self._toggle_button_common_a(vpar,"Пауза", lambda v: self._start_prog(v))
+
+        self.but_feed_pound = self._toggle_button_common_a(vpar,"Home_test", lambda v: self._set_home_test(v))
+        self.but_feed_pound = self._toggle_button_common_a(vpar,"Delta calibrate", lambda v: self._set_delta_calibr(v))
+        
+        vpar.addStretch()
+
+
+        grp_par = QtWidgets.QGroupBox("Калибровка стола")
+        hctrl.addWidget(grp_par)
+        vpar = QtWidgets.QVBoxLayout(grp_par)
+        vpar.setSpacing(spacing)
+
+        self.but_feed_pound = self._toggle_button_common_a(vpar,"Точка 1", lambda v: self.remember_point(v,0))        
+        self.but_feed_pound = self._toggle_button_common_a(vpar,"Точка 2", lambda v: self.remember_point(v,1))
+        self.but_feed_pound = self._toggle_button_common_a(vpar,"Точка 3", lambda v: self.remember_point(v,2))
+        self.but_feed_pound = self._toggle_button_common_a(vpar,"Калибровка стола", lambda v: self.bed_vec_comp(v))
+        self.but_feed_pound = self._toggle_button_common_a(vpar,"Сбросить калибровку стола", lambda v: self.bed_vec_reset(v))
         
         vpar.addStretch()
         #-----------------------------------------------------------
@@ -731,7 +748,19 @@ class StringGUI(QtWidgets.QWidget):
         #print(bool(1), bool(0))
         #self.start_code()
 
-    #------------TEST PROG FUNC-----------------------------------------
+    #------------PROG FUNC-----------------------------------------
+
+    def remember_point(self,val, num):
+        if val:
+            self._send_gcode(StringMashType.primary,f"main M616 {int(num)}")
+
+    def bed_vec_reset(self,val):
+        if val:
+            self._send_gcode(StringMashType.primary,f"main M616 -1")
+
+    def bed_vec_comp(self,val):
+        if val:
+            self._send_gcode(StringMashType.primary,f"main M616 5")
 
     def _open_prog(self, val, textbox):
         if val:
@@ -772,7 +801,7 @@ class StringGUI(QtWidgets.QWidget):
                 )
         else:
             pass
-
+        
 
     def _set_reley(self, val,ind):
         self._send_gcode(StringMashType.primary,f"num2 M579 I{int(ind)} S{int(val)}")
