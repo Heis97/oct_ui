@@ -535,8 +535,11 @@ class StringGUI(QtWidgets.QWidget):
         self.but_feed_pound = self._momentary_button_common_a(vpar,"-X", lambda v: self._jog_bool(v,1))
         self.but_feed_pound = self._momentary_button_common_a(vpar,"+Y", lambda v: self._jog_bool(v,2))
         self.but_feed_pound = self._momentary_button_common_a(vpar,"-Y", lambda v: self._jog_bool(v,3))
-        self.but_feed_pound = self._momentary_button_common_a(vpar,"+Z", lambda v: self._jog_direct_steps_vel(v,1))
-        self.but_feed_pound = self._momentary_button_common_a(vpar,"-Z", lambda v: self._jog_direct_steps_vel(v,-1))
+        self.but_feed_pound = self._momentary_button_common_a(vpar,"+Z", lambda v: self._jog_bool(v,4))
+        self.but_feed_pound = self._momentary_button_common_a(vpar,"-Z", lambda v: self._jog_bool(v,5))
+
+        """self.but_feed_pound = self._momentary_button_common_a(vpar,"+Z", lambda v: self._jog_direct_steps_vel(v,1))
+        self.but_feed_pound = self._momentary_button_common_a(vpar,"-Z", lambda v: self._jog_direct_steps_vel(v,-1))"""
         self.but_feed_pound = self._momentary_button_common_a(vpar,"+E", lambda v: self._jog_periph(v,7, 1,1))
         self.but_feed_pound = self._momentary_button_common_a(vpar,"-E", lambda v: self._jog_periph(v,7,-1,1))
         
@@ -829,7 +832,7 @@ class StringGUI(QtWidgets.QWidget):
 
     def _jog_direct_steps_vel(self, val, type):
         if val:
-            self._send_gcode(StringMashType.primary,f"num1 M589 Z0.1 E{int(type)}")
+            self._send_gcode(StringMashType.primary,f"num1 M589 Z10.0 E{int(type)}")
         else:
             self._send_gcode(StringMashType.primary,f"num1 M589 Z0 E0")
 
