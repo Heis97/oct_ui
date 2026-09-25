@@ -470,7 +470,7 @@ class StringGUI(QtWidgets.QWidget):
         #print("2")
         tabs = QtWidgets.QTabWidget(self)
         tabs.tabBar().setExpanding(True)
-        main_layout = QtWidgets.QVBoxLayout(self)
+        main_layout = QtWidgets.QVBoxLayout(self)   
         main_layout.addWidget(tabs)
         spacing = 12   #32
 
