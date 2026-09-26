@@ -501,7 +501,7 @@ class StringGUI(QtWidgets.QWidget):
         self.textbox.setText(self.textbox.toPlainText()+"G1 X10 E0.1\n")
         self.textbox.setText(self.textbox.toPlainText()+"G1 X10 Y10 E0.2\n")
         self.textbox.setText(self.textbox.toPlainText()+"G1 X0 Y10 E0.3\n")
-        self.textbox.setText(self.textbox.toPlainText()+"G1 X0 Y0 Z0 E0.5 F600\n")
+        self.textbox.setText(self.textbox.toPlainText()+"G1 X0 Y0 Z0 E0.4 F600\n")
 
         self.lbl_state_main =  QtWidgets.QLabel()
         self.lbl_state_main.setAlignment(Qt.AlignTop)
@@ -524,6 +524,8 @@ class StringGUI(QtWidgets.QWidget):
         self.but_feed_pound = self._toggle_button_common_a(vpar,"Уст. т. 0", lambda v: self._set_zero_p(v))
         self.but_feed_pound = self._toggle_button_common_a(vpar,"Передвиж в т. 0", lambda v: self._move_zero_p(v))
         self.but_feed_pound = self._toggle_button_common_a(vpar,"Загрузить настройки", lambda v: self._set_settings(v))
+        self._add_slider_na(vpar,"e_koef","",10,340,100, lambda v: self._set_e_koef(v))
+        self._add_slider_na(vpar,"vel_koef","",10,340,100, lambda v: self._set_vel_koef(v))
 
         vpar.addStretch()
 
@@ -753,6 +755,12 @@ class StringGUI(QtWidgets.QWidget):
 
     #------------PROG FUNC-----------------------------------------
 
+    def _set_e_koef(self, val):
+        self._send_gcode(StringMashType.primary,f"main M617 {int(val)}")
+
+    def _set_vel_koef(self, val):
+        self._send_gcode(StringMashType.primary,f"main M618 {int(val)}")
+
     def remember_point(self,val, num):
         if val:
             self._send_gcode(StringMashType.primary,f"main M616 {int(num)}")
@@ -825,6 +833,7 @@ class StringGUI(QtWidgets.QWidget):
 
     def _jog_bool(self, val, type):
         if val:
+            self._send_gcode(StringMashType.primary,f"main M597 2")
             self._send_gcode(StringMashType.primary,f"main M611 {int(type)}")
         else:
             self._send_gcode(StringMashType.primary,f"main M597 2")
@@ -851,8 +860,7 @@ class StringGUI(QtWidgets.QWidget):
             pass
 
     def _start_prog(self, val,textbox):
-        if val:
-            self._send_gcode(StringMashType.primary,f"num1 M587 I7 C0")
+        if val:            
             self._send_gcode(StringMashType.primary,f"main M598 0")
 
             text_code = textbox.toPlainText()
