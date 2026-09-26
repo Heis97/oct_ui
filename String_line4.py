@@ -527,6 +527,8 @@ class StringGUI(QtWidgets.QWidget):
         self._add_slider_na(vpar,"e_koef","",10,340,100, lambda v: self._set_e_koef(v))
         self._add_slider_na(vpar,"vel_koef","",10,340,100, lambda v: self._set_vel_koef(v))
 
+        self._add_slider_na(vpar,"jog_vel","",1,150,100, lambda v: self._set_jog_vel_koef(v),0.1)
+
         vpar.addStretch()
 
         grp_par = QtWidgets.QGroupBox("Ручн")
@@ -760,6 +762,9 @@ class StringGUI(QtWidgets.QWidget):
 
     def _set_vel_koef(self, val):
         self._send_gcode(StringMashType.primary,f"main M618 {int(val)}")
+
+    def _set_jog_vel_koef(self, val):
+        self._send_gcode(StringMashType.primary,f"main M610 {val:.2f}")
 
     def remember_point(self,val, num):
         if val:
