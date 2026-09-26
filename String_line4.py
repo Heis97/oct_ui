@@ -524,6 +524,8 @@ class StringGUI(QtWidgets.QWidget):
         self.but_feed_pound = self._toggle_button_common_a(vpar,"Уст. т. 0", lambda v: self._set_zero_p(v))
         self.but_feed_pound = self._toggle_button_common_a(vpar,"Передвиж в т. 0", lambda v: self._move_zero_p(v))
         self.but_feed_pound = self._toggle_button_common_a(vpar,"Загрузить настройки", lambda v: self._set_settings(v))
+
+        self.but_feed_pound = self._toggle_button_common_a(vpar,"Взять левый манипулятор", lambda v: self._set_take_left_tool(v))
         self._add_slider_na(vpar,"e_koef","",10,340,100, lambda v: self._set_e_koef(v))
         self._add_slider_na(vpar,"vel_koef","",10,340,100, lambda v: self._set_vel_koef(v))
 
@@ -762,6 +764,11 @@ class StringGUI(QtWidgets.QWidget):
 
     def _set_vel_koef(self, val):
         self._send_gcode(StringMashType.primary,f"main M618 {int(val)}")
+
+
+    def _set_take_left_tool(self, val):
+        if val:
+            self._send_gcode(StringMashType.primary,f"main M619 {int(val)}")
 
     def _set_jog_vel_koef(self, val):
         self._send_gcode(StringMashType.primary,f"main M610 {val:.2f}")
