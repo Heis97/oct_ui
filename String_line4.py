@@ -514,6 +514,7 @@ class StringGUI(QtWidgets.QWidget):
         hctrl.addWidget(self.lbl_state_sec)
 
         grp_par = QtWidgets.QGroupBox("Авто")
+
         hctrl.addWidget(grp_par)
         vpar = QtWidgets.QVBoxLayout(grp_par)
         vpar.setSpacing(spacing)
@@ -529,6 +530,8 @@ class StringGUI(QtWidgets.QWidget):
         self.but_feed_pound = self._momentary_button_common_a(vpar,"Отдать левый манипулятор", lambda v: self._set_give_left_tool(v))
 
         self.but_feed_pound = self._momentary_button_common_a(vpar,"Остановка", lambda v: self._stop_printer(v))
+
+        self.but_feed_pound = self._momentary_button_common_a(vpar,"Home manipulators", lambda v: self._home_manipulators(v))
 
 
         self._add_slider_na(vpar,"e_koef","",10,340,100, lambda v: self._set_e_koef(v))
@@ -764,7 +767,9 @@ class StringGUI(QtWidgets.QWidget):
 
     #------------PROG FUNC-----------------------------------------
 
-
+    def _home_manipulators(self, val):
+        if val:
+            self._send_gcode(StringMashType.primary,f"main M630")
     def _stop_printer(self, val):
         if val:
             self._send_gcode(StringMashType.primary,f"main M700")
