@@ -529,6 +529,9 @@ class StringGUI(QtWidgets.QWidget):
         self.but_feed_pound = self._momentary_button_common_a(vpar,"Взять левый манипулятор", lambda v: self._set_take_left_tool(v))
         self.but_feed_pound = self._momentary_button_common_a(vpar,"Отдать левый манипулятор", lambda v: self._set_give_left_tool(v))
 
+        self.but_feed_pound = self._momentary_button_common_a(vpar,"Взять правый манипулятор", lambda v: self._set_take_right_tool(v))
+        self.but_feed_pound = self._momentary_button_common_a(vpar,"Отдать правый манипулятор", lambda v: self._set_give_right_tool(v))
+
         self.but_feed_pound = self._momentary_button_common_a(vpar,"Остановка", lambda v: self._stop_printer(v))
 
         self.but_feed_pound = self._momentary_button_common_a(vpar,"Home manipulators", lambda v: self._home_manipulators(v))
@@ -786,6 +789,14 @@ class StringGUI(QtWidgets.QWidget):
     def _set_give_left_tool(self, val):
         if val:
             self._send_gcode(StringMashType.primary,f"main M620 {int(val)}")
+
+    def _set_take_right_tool(self, val):
+        if val:
+            self._send_gcode(StringMashType.primary,f"main M621 {int(val)}")
+    
+    def _set_give_right_tool(self, val):
+        if val:
+            self._send_gcode(StringMashType.primary,f"main M622 {int(val)}")
 
     def _set_jog_vel_koef(self, val):
         self._send_gcode(StringMashType.primary,f"main M610 {val:.2f}")
