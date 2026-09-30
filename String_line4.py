@@ -536,7 +536,10 @@ class StringGUI(QtWidgets.QWidget):
 
         self.but_feed_pound = self._momentary_button_common_a(vpar,"Home manipulators", lambda v: self._home_manipulators(v))
 
-        self._add_slider_na(vpar,"serv_cover","",40,240,120, lambda v: self._servo_cover(v,0,2))
+        self.but_feed_pound = self._momentary_button_common_a(vpar,"Забрать планшет", lambda v: self._set_bring_plate(v))
+        self.but_feed_pound = self._momentary_button_common_a(vpar,"Отдать планшет", lambda v: self._set_give_plate(v))
+
+        
 
 
         self._add_slider_na(vpar,"e_koef","",10,340,100, lambda v: self._set_e_koef(v))
@@ -659,6 +662,7 @@ class StringGUI(QtWidgets.QWidget):
         self.but_feed_pound = self._momentary_button_common_a(vpar,"down", lambda v: self._jog_periph(v,2,-1,2))
 
         self.but_feed_pound = self._momentary_button_common_a(vpar,"table home", lambda v: self._home_ax(v,0,2))
+        self.but_feed_pound = self._momentary_button_common_a(vpar,"cover home", lambda v: self._home_ax(v,2,2))
         
         self._add_slider_na(vpar,"Temp: ","C",20,50,37, lambda v: self._set_heater_val(v))
         self.but_feed_pound = self._toggle_button_common_a(vpar,"Нагрев", lambda v: self._set_heater_en(v))
@@ -666,6 +670,7 @@ class StringGUI(QtWidgets.QWidget):
         self.but_feed_pound = self._toggle_button_common_a(vpar,"Стол", lambda v: self._set_reley(v,1))
         self.but_feed_pound = self._toggle_button_common_a(vpar,"Крышка", lambda v: self._set_reley(v,2))
         self.but_feed_pound = self._toggle_button_common_a(vpar,"Сброс", lambda v: self._set_reley(v,3))
+        self._add_slider_na(vpar,"serv_cover","",40,240,120, lambda v: self._servo_cover(v,0,2))
 
         vpar.addStretch()
 
@@ -799,6 +804,14 @@ class StringGUI(QtWidgets.QWidget):
     def _set_give_right_tool(self, val):
         if val:
             self._send_gcode(StringMashType.primary,f"main M622 {int(val)}")
+
+    def _set_bring_plate(self, val):
+        if val:
+            self._send_gcode(StringMashType.primary,f"main M623 {int(val)}")
+
+    def _set_give_plate(self, val):
+        if val:
+            self._send_gcode(StringMashType.primary,f"main M624 {int(val)}")
 
     def _set_jog_vel_koef(self, val):
         self._send_gcode(StringMashType.primary,f"main M610 {val:.2f}")
