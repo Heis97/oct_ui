@@ -536,6 +536,8 @@ class StringGUI(QtWidgets.QWidget):
 
         self.but_feed_pound = self._momentary_button_common_a(vpar,"Home manipulators", lambda v: self._home_manipulators(v))
 
+        self._add_slider_na(vpar,"serv_cover","",40,240,120, lambda v: self._servo_cover(v,0,2))
+
 
         self._add_slider_na(vpar,"e_koef","",10,340,100, lambda v: self._set_e_koef(v))
         self._add_slider_na(vpar,"vel_koef","",10,340,100, lambda v: self._set_vel_koef(v))
@@ -594,7 +596,7 @@ class StringGUI(QtWidgets.QWidget):
         self.but_feed_pound = self._momentary_button_common_a(vpar,"-rot", lambda v: self._jog_periph(v,4,-1,1))
         self.but_feed_pound = self._momentary_button_common_a(vpar,"+up", lambda v: self._jog_periph(v,3,1,1))
         self.but_feed_pound = self._momentary_button_common_a(vpar,"-down", lambda v: self._jog_periph(v,3,-1,1))
-        self._add_slider_na(vpar,"serv_1","",40,240,120, lambda v: self._servo_rot(v,0))
+        self._add_slider_na(vpar,"serv_1","",40,240,120, lambda v: self._servo_rot(v,0,1))
 
         self.but_feed_pound = self._momentary_button_common_a(vpar,"home rot", lambda v: self._home_ax(v,4,1))
         self.but_feed_pound = self._momentary_button_common_a(vpar,"home lift", lambda v: self._home_ax(v,3,1))
@@ -607,7 +609,7 @@ class StringGUI(QtWidgets.QWidget):
         self.but_feed_pound = self._momentary_button_common_a(vpar,"-rot", lambda v: self._jog_periph(v,6,-1,1))
         self.but_feed_pound = self._momentary_button_common_a(vpar,"+up", lambda v: self._jog_periph(v,5,1,1))
         self.but_feed_pound = self._momentary_button_common_a(vpar,"-down", lambda v: self._jog_periph(v,5,-1,1))
-        self._add_slider_na(vpar,"serv_2","",40,240,120, lambda v: self._servo_rot(v,1))
+        self._add_slider_na(vpar,"serv_2","",40,240,120, lambda v: self._servo_rot(v,1,1))
 
         self.but_feed_pound = self._momentary_button_common_a(vpar,"home rot", lambda v: self._home_ax(v,6,1))
         self.but_feed_pound = self._momentary_button_common_a(vpar,"home lift", lambda v: self._home_ax(v,5,1))
@@ -867,8 +869,14 @@ class StringGUI(QtWidgets.QWidget):
     def _set_heater_val(self, val):
         self._send_gcode(StringMashType.primary,f"num2 M579 T{int(val)}")
 
-    def _servo_rot(self, val,ind):
-        self._send_gcode(StringMashType.primary,f"num1 M577 I{ind} V{int(val)}")
+    def _servo_rot(self, val,ind,num):
+        self._send_gcode(StringMashType.primary,f"num{num} M577 I{ind} V{int(val)}")
+
+    def _servo_cover(self, val,ind,num):
+        self._servo_rot(val,ind,num)
+        self._servo_rot(180-val,ind+1,num)
+
+    
 
 
     def _jog_bool(self, val, type):
