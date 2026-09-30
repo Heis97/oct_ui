@@ -16,6 +16,7 @@ class StringStatePrimary(object):
     axis_names = ["X","Y","Z","I","J","K","U","E"]
     cur_pos: "list[int]" = 8*[0]
     cur_end: "list[int]" = 8*[0]
+    steps: "list[int]" = 8*[0]
     debug: "list[int]" = 8*[0]
 
     cur_counter:int = 0
@@ -25,6 +26,7 @@ class StringStatePrimary(object):
     homing_done:int = 0
     temp_cur:int = 0
     prog_done:int = 0
+    
 
     x:float = 0.0
     y:float = 0.0
@@ -85,8 +87,11 @@ class StringStatePrimary(object):
                     for i in range(8):
                         self.cur_end[i] = int(values[3+i]) 
 
-
                 elif cur_send == 3:
+                    for i in range(8):
+                        self.steps[i] = int(values[3+i]) 
+
+                elif cur_send == 4:
                     for i in range(8):
                         self.debug[i] = int(values[3+i]) 
 
@@ -105,6 +110,7 @@ class StringStatePrimary(object):
     def clone(self,state:"StringStatePrimary"):
         self.cur_pos = copy.deepcopy(state.cur_pos)
         self.cur_end = copy.deepcopy(state.cur_end)
+        self.steps = copy.deepcopy(state.steps)
         self.debug = copy.deepcopy(state.debug)
 
     
@@ -137,6 +143,10 @@ class StringStatePrimary(object):
         outp += "\n"
         for i in range(8):
             outp += "\n"+self.axis_names[i]+"end: "+str(self.cur_end[i])
+
+        outp += "\n"
+        for i in range(8):
+            outp += "\n"+self.axis_names[i]+"steps: "+str(self.steps[i])
 
         outp += "\n"
         for i in range(8):
