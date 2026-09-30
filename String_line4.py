@@ -763,6 +763,8 @@ class StringGUI(QtWidgets.QWidget):
         self.but_feed_pound = self._toggle_button_common_a(vpar,"Точка 3", lambda v: self.remember_point(v,2))
         self.but_feed_pound = self._toggle_button_common_a(vpar,"Калибровка стола", lambda v: self.bed_vec_comp(v))
         self.but_feed_pound = self._toggle_button_common_a(vpar,"Сбросить калибровку стола", lambda v: self.bed_vec_reset(v))
+
+        self.but_feed_pound = self._momentary_button_common_a(vpar,"Калибровка носика", lambda v: self._nossle_calibrate(v))
         
         vpar.addStretch()
         #-----------------------------------------------------------
@@ -776,6 +778,9 @@ class StringGUI(QtWidgets.QWidget):
         #self.start_code()
 
     #------------PROG FUNC-----------------------------------------
+    def _nossle_calibrate(self, val):
+        if val:
+            self._send_gcode(StringMashType.primary,f"main M631")
 
     def _home_manipulators(self, val):
         if val:
