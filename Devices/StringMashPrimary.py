@@ -26,6 +26,8 @@ class StringStatePrimary(object):
     homing_done:int = 0
     temp_cur:int = 0
     prog_done:int = 0
+
+    tool_recogn:int = 0
     
 
     x:float = 0.0
@@ -74,6 +76,7 @@ class StringStatePrimary(object):
                     self.homing_done:int = int(values[6])
                     self.temp_cur:int = int(values[7])
                     self.prog_done:int = int(values[8])
+                    self.tool_recogn:int = int(values[10])
 
                 elif cur_send == 1:
                     for i in range(8):
@@ -121,6 +124,7 @@ class StringStatePrimary(object):
         self.homing_done:int = state.homing_done
         self.temp_cur:int = state.temp_cur
         self.prog_done:int = state.prog_done
+        self.tool_recogn:int = state.tool_recogn
         
         
         self.x:float = state.x
@@ -135,7 +139,7 @@ class StringStatePrimary(object):
         #print("out ",self.temp_val_ext)
         outp = ""+str(self.cur_counter)+\
                 "\ndelta_calib: "+str(self.delta_calib)+"\nring_buf_go: "+str(self.ring_buf_go)+"\nhoming_done: "+str(self.homing_done)+"\ntemp: "+str(self.temp_cur)+"\n "+"\nprog_done: "+str(self.prog_done)+"\n "+\
-                "\nx: "+str(round( self.x,2))+"\ny: "+str(round( self.y,2))+"\nz: "+str(round( self.z,2))
+                "\ntools: "+str(self.tool_recogn)+"\nx: "+str(round( self.x,2))+"\ny: "+str(round( self.y,2))+"\nz: "+str(round( self.z,2))
         
         outp += "\n"
         for i in range(8):
@@ -143,14 +147,14 @@ class StringStatePrimary(object):
         outp += "\n"
         for i in range(8):
             outp += "\n"+self.axis_names[i]+"end: "+str(self.cur_end[i])
-
+        outp += "\n"
+        for i in range(8):
+            outp += "\ndeb: "+str(self.debug[i])
         outp += "\n"
         for i in range(8):
             outp += "\n"+self.axis_names[i]+"steps: "+str(self.steps[i])
 
-        outp += "\n"
-        for i in range(8):
-            outp += "\ndeb: "+str(self.debug[i])
+        
 
         return outp
                         
