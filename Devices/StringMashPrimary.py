@@ -27,7 +27,7 @@ class StringStatePrimary(object):
     temp_cur:int = 0
     prog_done:int = 0
 
-    tool_recogn:int = 0
+    tool_recogn:str = 0
     
 
     x:float = 0.0
@@ -76,7 +76,7 @@ class StringStatePrimary(object):
                     self.homing_done:int = int(values[6])
                     self.temp_cur:int = int(values[7])
                     self.prog_done:int = int(values[8])
-                    self.tool_recogn:int = int(values[10])
+                    self.tool_recogn:str = values[10]
 
                 elif cur_send == 1:
                     for i in range(8):
@@ -124,7 +124,7 @@ class StringStatePrimary(object):
         self.homing_done:int = state.homing_done
         self.temp_cur:int = state.temp_cur
         self.prog_done:int = state.prog_done
-        self.tool_recogn:int = state.tool_recogn
+        self.tool_recogn = copy.deepcopy(state.tool_recogn)
         
         
         self.x:float = state.x
