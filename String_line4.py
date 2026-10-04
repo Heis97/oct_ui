@@ -535,6 +535,7 @@ class StringGUI(QtWidgets.QWidget):
         self.but_feed_pound = self._momentary_button_common_a(vpar,"Остановка", lambda v: self._stop_printer(v))
 
         self.but_feed_pound = self._momentary_button_common_a(vpar,"Home manipulators", lambda v: self._home_manipulators(v))
+        self.but_feed_pound = self._momentary_button_common_a(vpar,"Home oscillators", lambda v: self._home_oscillators(v))
 
         self.but_feed_pound = self._momentary_button_common_a(vpar,"Забрать планшет", lambda v: self._set_bring_plate(v))
         self.but_feed_pound = self._momentary_button_common_a(vpar,"Отдать планшет", lambda v: self._set_give_plate(v))
@@ -564,6 +565,8 @@ class StringGUI(QtWidgets.QWidget):
         self.but_feed_pound = self._momentary_button_common_a(vpar,"-Z", lambda v: self._jog_direct_steps_vel(v,-1))"""
         self.but_feed_pound = self._momentary_button_common_a(vpar,"+E", lambda v: self._jog_periph(v,7, 1,1))
         self.but_feed_pound = self._momentary_button_common_a(vpar,"-E", lambda v: self._jog_periph(v,7,-1,1))
+
+        self.but_feed_pound = self._momentary_button_common_a(vpar,"Тест прог", lambda v: self._test_debug_prog(v))
         
 
         vpar.addStretch()
@@ -778,6 +781,9 @@ class StringGUI(QtWidgets.QWidget):
         #self.start_code()
 
     #------------PROG FUNC-----------------------------------------
+    def _test_debug_prog(self, val):
+        if val:
+            self._send_gcode(StringMashType.primary,f"main M635")
     def _nossle_calibrate(self, val):
         if val:
             self._send_gcode(StringMashType.primary,f"main M631")
@@ -785,6 +791,10 @@ class StringGUI(QtWidgets.QWidget):
     def _home_manipulators(self, val):
         if val:
             self._send_gcode(StringMashType.primary,f"main M630")
+
+    def _home_oscillators(self, val):
+        if val:
+            self._send_gcode(StringMashType.primary,f"main M634")
     def _stop_printer(self, val):
         if val:
             self._send_gcode(StringMashType.primary,f"main M700")
@@ -959,7 +969,7 @@ class StringGUI(QtWidgets.QWidget):
 
     def _set_home(self, val):
         if val:
-            self._send_gcode(StringMashType.primary,f"num1 M589 X10")
+            self._send_gcode(StringMashType.primary,f"num1 M589 X12")
         else:
             pass
                 #self._send_gcode(StringMashType.primary,f"M597 2")
