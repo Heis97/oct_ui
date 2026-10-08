@@ -567,6 +567,12 @@ class StringGUI(QtWidgets.QWidget):
         self.but_feed_pound = self._momentary_button_common_a(vpar,"-E", lambda v: self._jog_periph(v,7,-1,1))
 
         self.but_feed_pound = self._momentary_button_common_a(vpar,"Тест прог", lambda v: self._test_debug_prog(v))
+
+        self.but_feed_pound = self._momentary_button_common_a(vpar,"Взять инструмент 1", lambda v: self._take_ind_tool(v,1))
+        self.but_feed_pound = self._momentary_button_common_a(vpar,"Взять инструмент 2", lambda v: self._take_ind_tool(v,2))
+        self.but_feed_pound = self._momentary_button_common_a(vpar,"Взять инструмент 3", lambda v: self._take_ind_tool(v,3))
+
+        self.but_feed_pound = self._momentary_button_common_a(vpar,"Отдать текущий инструмент", lambda v: self._drop_active_tool(v))
         
 
         vpar.addStretch()
@@ -580,12 +586,12 @@ class StringGUI(QtWidgets.QWidget):
 
         self.lbl_state_main2 =  QtWidgets.QLabel()
         self.lbl_state_main2.setAlignment(Qt.AlignTop)
-        self.lbl_state_main2.setText('\n\n\n\nОбъём вверх\nОбъём вверх\nОбъём вверх\nОбъём вверх\nОбъём вверх\nОбъём вверх\nОбъём вверх\nОбъём вверх\n')
+        self.lbl_state_main2.setText('\n\n\n\nНет данных\n')
         hctrl.addWidget(self.lbl_state_main2)
 
         self.lbl_state_sec2 =  QtWidgets.QLabel()
         self.lbl_state_sec2.setAlignment(Qt.AlignTop)
-        self.lbl_state_sec2.setText('\n\n\n\nОбъём вверх\nОбъём вверх\nОбъём вверх\nОбъём вверх\nОбъём вверх\nОбъём вверх\nОбъём вверх\nОбъём вверх\n')
+        self.lbl_state_sec2.setText('\n\n\n\nНет данных\n')
         hctrl.addWidget(self.lbl_state_sec2)
 
         # Parameters
@@ -752,7 +758,10 @@ class StringGUI(QtWidgets.QWidget):
 
         self.but_feed_pound = self._toggle_button_common_a(vpar,"Home_test", lambda v: self._set_home_test(v))
         self.but_feed_pound = self._toggle_button_common_a(vpar,"Delta calibrate", lambda v: self._set_delta_calibr(v))
-        
+
+        self._add_slider_na(vpar,"Освещение","",0,255,0, lambda v: self._set_pwm_fan(2,1,v))
+        self._add_slider_na(vpar,"Вентилятор ламинара","",0,255,0, lambda v: self._set_pwm_fan(1,2,v))
+        self._add_slider_na(vpar,"Вентилятор источника питания","",0,255,255, lambda v: self._set_pwm_fan(1,1,v))
         vpar.addStretch()
 
 
@@ -781,6 +790,17 @@ class StringGUI(QtWidgets.QWidget):
         #self.start_code()
 
     #------------PROG FUNC-----------------------------------------
+    def _set_pwm_fan(self, num_board, num_pin, power):
+        self._send_gcode(StringMashType.primary,f"num{int(num_board)} M581 A{int(power)} I{int(num_pin)}")
+
+    def _take_ind_tool(self, val, ind):
+        if val:
+            self._send_gcode(StringMashType.primary,f"main M620 {int(ind)}")
+
+    def _drop_active_tool(self, val):
+        if val:
+            self._send_gcode(StringMashType.primary,f"main M621")
+
     def _test_debug_prog(self, val):
         if val:
             self._send_gcode(StringMashType.primary,f"main M635")
@@ -806,19 +826,19 @@ class StringGUI(QtWidgets.QWidget):
 
     def _set_take_left_tool(self, val):
         if val:
-            self._send_gcode(StringMashType.primary,f"main M619 {int(val)}")
+            self._send_gcode(StringMashType.primary,f"main M619 0 {int(val)}")
 
     def _set_give_left_tool(self, val):
         if val:
-            self._send_gcode(StringMashType.primary,f"main M620 {int(val)}")
+            self._send_gcode(StringMashType.primary,f"main M619 1 {int(val)}")
 
     def _set_take_right_tool(self, val):
         if val:
-            self._send_gcode(StringMashType.primary,f"main M621 {int(val)}")
+            self._send_gcode(StringMashType.primary,f"main M619 2 {int(val)}")
     
     def _set_give_right_tool(self, val):
         if val:
-            self._send_gcode(StringMashType.primary,f"main M622 {int(val)}")
+            self._send_gcode(StringMashType.primary,f"main M619 3 {int(val)}")
 
     def _set_bring_plate(self, val):
         if val:

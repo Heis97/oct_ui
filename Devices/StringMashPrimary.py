@@ -27,7 +27,9 @@ class StringStatePrimary(object):
     temp_cur:int = 0
     prog_done:int = 0
 
-    tool_recogn:str = 0
+    tool_recogn:str = "0"
+
+    tools:str = "0"
     
 
     x:float = 0.0
@@ -85,6 +87,12 @@ class StringStatePrimary(object):
                     self.x = float(values[11])
                     self.y = float(values[12])
                     self.z = float(values[13])
+                    if len(values) > 14: 
+                        self.tools = values[14]
+
+
+
+                    
 
                 elif cur_send == 2:
                     for i in range(8):
@@ -125,6 +133,7 @@ class StringStatePrimary(object):
         self.temp_cur:int = state.temp_cur
         self.prog_done:int = state.prog_done
         self.tool_recogn = copy.deepcopy(state.tool_recogn)
+        self.tools = copy.deepcopy(state.tools)
         
         
         self.x:float = state.x
@@ -140,19 +149,26 @@ class StringStatePrimary(object):
         outp = ""+str(self.cur_counter)+\
                 "\ndelta_calib: "+str(self.delta_calib)+"\nring_buf_go: "+str(self.ring_buf_go)+"\nhoming_done: "+str(self.homing_done)+"\ntemp: "+str(self.temp_cur)+"\n "+"\nprog_done: "+str(self.prog_done)+"\n "+\
                 "\ntools: "+str(self.tool_recogn)+"\nx: "+str(round( self.x,2))+"\ny: "+str(round( self.y,2))+"\nz: "+str(round( self.z,2))
-        
+
+        outp += "\n"
+        if len(self.tools) == 5:
+            outp += "\n"+"tool_manip_right: "+self.tools[0]
+            outp += "\n"+"tool_manip_left : "+self.tools[1]
+            outp += "\n"+"tool_osc_right  : "+self.tools[2]
+            outp += "\n"+"tool_osc_left   : "+self.tools[3]
+            outp += "\n"+"tool_active     : "+self.tools[4]
         outp += "\n"
         for i in range(8):
             outp += "\n"+self.axis_names[i]+"pos: "+str(self.cur_pos[i])
         outp += "\n"
         for i in range(8):
             outp += "\n"+self.axis_names[i]+"end: "+str(self.cur_end[i])
-        outp += "\n"
-        for i in range(8):
-            outp += "\ndeb: "+str(self.debug[i])
-        outp += "\n"
-        for i in range(8):
-            outp += "\n"+self.axis_names[i]+"steps: "+str(self.steps[i])
+        #outp += "\n"
+        #for i in range(8):
+        #    outp += "\ndeb: "+str(self.debug[i])
+        #outp += "\n"
+        #for i in range(8):
+        #    outp += "\n"+self.axis_names[i]+"steps: "+str(self.steps[i])
 
         
 
