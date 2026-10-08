@@ -573,6 +573,10 @@ class StringGUI(QtWidgets.QWidget):
         self.but_feed_pound = self._momentary_button_common_a(vpar,"Взять инструмент 3", lambda v: self._take_ind_tool(v,3))
 
         self.but_feed_pound = self._momentary_button_common_a(vpar,"Отдать текущий инструмент", lambda v: self._drop_active_tool(v))
+
+        self.but_feed_pound = self._momentary_button_common_a(vpar,"Задать текущий инстр. как 1", lambda v: self._set_tool_act_ind(v,1))
+        self.but_feed_pound = self._momentary_button_common_a(vpar,"Задать текущий инстр. как 2", lambda v: self._set_tool_act_ind(v,2))
+        self.but_feed_pound = self._momentary_button_common_a(vpar,"Задать текущий инстр. как 3", lambda v: self._set_tool_act_ind(v,3))
         
 
         vpar.addStretch()
@@ -790,6 +794,10 @@ class StringGUI(QtWidgets.QWidget):
         #self.start_code()
 
     #------------PROG FUNC-----------------------------------------
+    def _set_tool_act_ind(self, val, num):
+        if val:
+            self._send_gcode(StringMashType.primary,f"main M639 {int(num)}")
+
     def _set_pwm_fan(self, num_board, num_pin, power):
         self._send_gcode(StringMashType.primary,f"num{int(num_board)} M581 A{int(power)} I{int(num_pin)}")
 

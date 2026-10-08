@@ -24,7 +24,7 @@ class StringStatePrimary(object):
     delta_calib:int = 0
     ring_buf_go:int = 0
     homing_done:int = 0
-    temp_cur:int = 0
+    temp_cur:float = 0.0
     prog_done:int = 0
 
     tool_recogn:str = "0"
@@ -65,30 +65,31 @@ class StringStatePrimary(object):
         if state is not None:
             self.clone(state)
         #print(values)
-        if len(values) > 13: 
+        if len(values) > 14: 
 
-            try:
+            #try:
                 self.cur_buf:int = int(values[1])
                 cur_send = int(values[2])
+                self.prog_done = values[3]
                 if cur_send == 0:
                    
-                    self.cur_counter:int = int(values[3])                   
-                    self.delta_calib:int = int(values[4])
-                    self.ring_buf_go:int = int(values[5])
-                    self.homing_done:int = int(values[6])
-                    self.temp_cur:int = int(values[7])
-                    self.prog_done:int = int(values[8])
+                    self.cur_counter:int = int(values[8])                   
+                    self.delta_calib:int = int(values[5])
+                    self.ring_buf_go:int = int(values[6])
+                    #self.cur_counter:int = int(values[7])
+                    self.temp_cur:float = int(values[7])/100.0
+                    #self.prog_done:int = int(values[9])
                     self.tool_recogn:str = values[10]
 
                 elif cur_send == 1:
                     for i in range(8):
-                        self.cur_pos[i] = int(values[3+i]) 
+                        self.cur_pos[i] = int(values[4+i]) 
 
-                    self.x = float(values[11])
-                    self.y = float(values[12])
-                    self.z = float(values[13])
-                    if len(values) > 14: 
-                        self.tools = values[14]
+                    self.x = float(values[12])
+                    self.y = float(values[13])
+                    self.z = float(values[14])
+                    if len(values) > 15: 
+                        self.tools = values[15]
 
 
 
@@ -96,22 +97,22 @@ class StringStatePrimary(object):
 
                 elif cur_send == 2:
                     for i in range(8):
-                        self.cur_end[i] = int(values[3+i]) 
+                        self.cur_end[i] = int(values[4+i]) 
 
                 elif cur_send == 3:
                     for i in range(8):
-                        self.steps[i] = int(values[3+i]) 
+                        self.steps[i] = int(values[4+i]) 
 
                 elif cur_send == 4:
                     for i in range(8):
-                        self.debug[i] = int(values[3+i]) 
+                        self.debug[i] = int(values[4+i]) 
 
                     
 
 
                 self.parsed = True
-            except :
-                pass
+            #except :
+                #pass
                 #print("parse_exc")
         else:
             pass
@@ -130,7 +131,7 @@ class StringStatePrimary(object):
         self.delta_calib:int = state.delta_calib
         self.ring_buf_go:int = state.ring_buf_go
         self.homing_done:int = state.homing_done
-        self.temp_cur:int = state.temp_cur
+        self.temp_cur:float = state.temp_cur
         self.prog_done:int = state.prog_done
         self.tool_recogn = copy.deepcopy(state.tool_recogn)
         self.tools = copy.deepcopy(state.tools)
@@ -147,15 +148,15 @@ class StringStatePrimary(object):
     def __str__(self):
         #print("out ",self.temp_val_ext)
         outp = ""+str(self.cur_counter)+\
-                "\ndelta_calib: "+str(self.delta_calib)+"\nring_buf_go: "+str(self.ring_buf_go)+"\nhoming_done: "+str(self.homing_done)+"\ntemp: "+str(self.temp_cur)+"\n "+"\nprog_done: "+str(self.prog_done)+"\n "+\
+                "\ndelta_calib: "+str(self.delta_calib)+"\nring_buf_go: "+str(self.ring_buf_go)+"\nhoming_done: "+str(self.homing_done)+"\ntemp: "+str(round(self.temp_cur,2))+"\n "+"\nprog_done: "+str(self.prog_done)+"\n "+\
                 "\ntools: "+str(self.tool_recogn)+"\nx: "+str(round( self.x,2))+"\ny: "+str(round( self.y,2))+"\nz: "+str(round( self.z,2))
 
         outp += "\n"
         if len(self.tools) == 5:
-            outp += "\n"+"tool_manip_right: "+self.tools[0]
-            outp += "\n"+"tool_manip_left : "+self.tools[1]
-            outp += "\n"+"tool_osc_right  : "+self.tools[2]
-            outp += "\n"+"tool_osc_left   : "+self.tools[3]
+            outp += "\n"+"tool_manip_left: "+self.tools[0]
+            outp += "\n"+"tool_manip_right : "+self.tools[1]
+            outp += "\n"+"tool_osc_left  : "+self.tools[2]
+            outp += "\n"+"tool_osc_right   : "+self.tools[3]
             outp += "\n"+"tool_active     : "+self.tools[4]
         outp += "\n"
         for i in range(8):
