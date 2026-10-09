@@ -494,10 +494,10 @@ class StringGUI(QtWidgets.QWidget):
         vpar = QtWidgets.QVBoxLayout(grp_par)
         vpar.setSpacing(spacing)
 
-        #self.slab_vibr_ampl_shkiv = self._add_slider_na(vpar, "Подача", "", 1, 255, 10,  lambda v: self._send_gcode(StringMashType.secondary,f"M581 C{int(v)}"))
+
         self.textbox:QtWidgets.QTextEdit = self._add_textbox_na(vpar,1.0)
-        
-        self.textbox.setText("G1 X0 Y0 F600\n")
+        self.textbox.setText("G92 X0 Y0 Z0 E0\n")
+        self.textbox.setText(self.textbox.toPlainText()+"G1 X0 Y0 F600\n")
         self.textbox.setText(self.textbox.toPlainText()+"G1 X10 E0.1\n")
         self.textbox.setText(self.textbox.toPlainText()+"G1 X10 Y10 E0.2\n")
         self.textbox.setText(self.textbox.toPlainText()+"G1 X0 Y10 E0.3\n")
