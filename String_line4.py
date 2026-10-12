@@ -501,7 +501,18 @@ class StringGUI(QtWidgets.QWidget):
         self.textbox.setText(self.textbox.toPlainText()+"G1 X10 E0.1\n")
         self.textbox.setText(self.textbox.toPlainText()+"G1 X10 Y10 E0.2\n")
         self.textbox.setText(self.textbox.toPlainText()+"G1 X0 Y10 E0.3\n")
-        self.textbox.setText(self.textbox.toPlainText()+"G1 X0 Y0 Z0 E0.4 F600\n")
+        self.textbox.setText(self.textbox.toPlainText()+"G1 X0 Y0 E0.4 F600\n")
+        #self.textbox.setText(self.textbox.toPlainText()+"G4 P50000\n")
+        self.textbox.setText(self.textbox.toPlainText()+"G91\n")
+        self.textbox.setText(self.textbox.toPlainText()+"G1 Z-10\n")
+        self.textbox.setText(self.textbox.toPlainText()+"G90\n")
+        #self.textbox.setText(self.textbox.toPlainText()+"G4 P50000\n")
+        self.textbox.setText(self.textbox.toPlainText()+"G92 X0 Y0 Z0 E0\n")
+        self.textbox.setText(self.textbox.toPlainText()+"G1 X0 Y0 F600\n")
+        self.textbox.setText(self.textbox.toPlainText()+"G1 X10 E0.1\n")
+        self.textbox.setText(self.textbox.toPlainText()+"G1 X10 Y10 E0.2\n")
+        self.textbox.setText(self.textbox.toPlainText()+"G1 X0 Y10 E0.3\n")
+        self.textbox.setText(self.textbox.toPlainText()+"G1 X0 Y0 E0.4 F600\n")
 
         self.lbl_state_main =  QtWidgets.QLabel()
         self.lbl_state_main.setAlignment(Qt.AlignTop)
@@ -979,7 +990,7 @@ class StringGUI(QtWidgets.QWidget):
 
     def _set_zero_p(self, val):
         if val:
-            self._send_gcode(StringMashType.primary,f"main M612")
+            self._send_gcode(StringMashType.primary,f"main M612 0 0 0")
         else:
             pass
 
@@ -1167,10 +1178,10 @@ class StringGUI(QtWidgets.QWidget):
 
     def _update_state(self, state1: StringStatePrimary, state2: StringStatePrimary) -> None: 
         #self.lbl_state.setText("_____________Состояние\n"+str(state1)+"\n")
-        self.lbl_state_main.setText("\n\n\n\nСостояние\n"+str(state1))
-        self.lbl_state_main2.setText("\n\n\n\nСостояние\n"+str(state1))
-        self.lbl_state_sec.setText("\n\n\n\nСостояние\n"+str(state2))
-        self.lbl_state_sec2.setText("\n\n\n\nСостояние\n"+str(state2))
+        self.lbl_state_main.setText("\n\n\n\nСостояние_______________\n"+str(state1))
+        self.lbl_state_main2.setText("\n\n\n\nСостояние_______________\n"+str(state1))
+        self.lbl_state_sec.setText("\n\n\n\nСостояние_______________\n"+str(state2))
+        self.lbl_state_sec2.setText("\n\n\n\nСостояние_______________\n"+str(state2))
 
 
     def update_serial_ports(self):

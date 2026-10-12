@@ -19,10 +19,10 @@ class StringStatePrimary(object):
     steps: "list[int]" = 8*[0]
     debug: "list[int]" = 8*[0]
 
-    cur_counter:int = 0
+    cur_counter:str = "0"
     cur_buf:int = 0
-    delta_calib:int = 0
-    ring_buf_go:int = 0
+    delta_calib:str = "0"
+    ring_buf_go:str = "0"
     homing_done:int = 0
     temp_cur:float = 0.0
     prog_done:int = 0
@@ -73,9 +73,9 @@ class StringStatePrimary(object):
                 self.prog_done = values[3]
                 if cur_send == 0:
                    
-                    self.cur_counter:int = int(values[8])                   
-                    self.delta_calib:int = int(values[5])
-                    self.ring_buf_go:int = int(values[6])
+                    self.cur_counter:str = values[8]                  
+                    self.delta_calib:str = values[5]
+                    self.ring_buf_go:str = values[6]
                     #self.cur_counter:int = int(values[7])
                     self.temp_cur:float = int(values[7])/100.0
                     #self.prog_done:int = int(values[9])
@@ -126,10 +126,10 @@ class StringStatePrimary(object):
         self.debug = copy.deepcopy(state.debug)
 
     
-        self.cur_counter:int = state.cur_counter
+        self.cur_counter:int = copy.deepcopy(state.cur_counter)
         self.cur_buf:int = state.cur_buf
-        self.delta_calib:int = state.delta_calib
-        self.ring_buf_go:int = state.ring_buf_go
+        self.delta_calib:int = copy.deepcopy(state.delta_calib)
+        self.ring_buf_go:int = copy.deepcopy(state.ring_buf_go)
         self.homing_done:int = state.homing_done
         self.temp_cur:float = state.temp_cur
         self.prog_done:int = state.prog_done
