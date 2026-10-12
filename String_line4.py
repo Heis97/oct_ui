@@ -774,6 +774,8 @@ class StringGUI(QtWidgets.QWidget):
         self.but_feed_pound = self._toggle_button_common_a(vpar,"Home_test", lambda v: self._set_home_test(v))
         self.but_feed_pound = self._toggle_button_common_a(vpar,"Delta calibrate", lambda v: self._set_delta_calibr(v))
 
+        self.but_feed_pound = self._toggle_button_common_a(vpar,"Включить лазер", lambda v: self._set_pwm_fan(1,7,v))
+
         self._add_slider_na(vpar,"Освещение","",0,255,0, lambda v: self._set_pwm_fan(2,1,v))
         self._add_slider_na(vpar,"Вентилятор ламинара","",0,255,0, lambda v: self._set_pwm_fan(1,2,v))
         self._add_slider_na(vpar,"Вентилятор источника питания","",0,255,255, lambda v: self._set_pwm_fan(1,1,v))
@@ -990,7 +992,7 @@ class StringGUI(QtWidgets.QWidget):
 
     def _set_zero_p(self, val):
         if val:
-            self._send_gcode(StringMashType.primary,f"main M612 0 0 0")
+            self._send_gcode(StringMashType.primary,f"main M612 0 0 0 0 1 1 1 1")
         else:
             pass
 
