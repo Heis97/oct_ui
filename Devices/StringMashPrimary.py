@@ -87,7 +87,8 @@ class StringStatePrimary(object):
 
                     self.x = float(values[12])
                     self.y = float(values[13])
-                    self.z = float(values[14])
+                    if len(values[14])>2:
+                        self.z = float(values[14])
                     if len(values) > 15: 
                         self.tools = values[15]
 
