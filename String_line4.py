@@ -443,6 +443,11 @@ class StringGUI(QtWidgets.QWidget):
     move_e = False
 
     tared = False
+
+
+    autocalibr = False
+    table_out = False
+    cover_up = False
     
     def __init__(self) -> None:
         super().__init__(None, QtCore.Qt.Window)
@@ -656,12 +661,12 @@ class StringGUI(QtWidgets.QWidget):
         self.lbl3.setText('\nМанипулятор 1\n')
         vpar.addWidget(self.lbl3)
         
-        self.but_feed_pound = self._momentary_button_common_a(vpar,"+rot", lambda v: self._jog_periph(v,4,1,2))
-        self.but_feed_pound = self._momentary_button_common_a(vpar,"-rot", lambda v: self._jog_periph(v,4,-1,2))
-        self.but_feed_pound = self._momentary_button_common_a(vpar,"+up", lambda v: self._jog_periph(v,3,1,2))
+        self.but_feed_pound = self._momentary_button_common_a(vpar,"+rot",  lambda v: self._jog_periph(v,4, 1,2))
+        self.but_feed_pound = self._momentary_button_common_a(vpar,"-rot",  lambda v: self._jog_periph(v,4,-1,2))
+        self.but_feed_pound = self._momentary_button_common_a(vpar,"+up",   lambda v: self._jog_periph(v,3, 1,2))
         self.but_feed_pound = self._momentary_button_common_a(vpar,"-down", lambda v: self._jog_periph(v,3,-1,2))
 
-        self.but_feed_pound = self._momentary_button_common_a(vpar,"home rot", lambda v: self._home_ax(v,4,2))
+        self.but_feed_pound = self._momentary_button_common_a(vpar,"home rot",  lambda v: self._home_ax(v,4,2))
         self.but_feed_pound = self._momentary_button_common_a(vpar,"home lift", lambda v: self._home_ax(v,3,2))
 
         self.lbl4 =  QtWidgets.QLabel()
@@ -752,6 +757,10 @@ class StringGUI(QtWidgets.QWidget):
         self.but_feed_pound = self._momentary_button_common_a(vpar,"Загрузить прогр", lambda v: self._open_prog(v,self.textbox2))
         self.but_feed_pound = self._toggle_button_common_a(vpar,"Запуск прогр", lambda v: self._start_prog(v,self.textbox2))
         self.but_feed_pound = self._toggle_button_common_a(vpar,"Пауза", lambda v: self._start_prog(v))
+
+        self.but_feed_pound = self._toggle_button_common_a(vpar,"Автокалибровка", lambda v: self._set_coord_type(v))
+        self.but_feed_pound = self._toggle_button_common_a(vpar,"Выезд стола", lambda v: self._set_table_out(v))
+        self.but_feed_pound = self._toggle_button_common_a(vpar,"Поднятие крышки", lambda v: self._set_cover_up(v))
            
         vpar.addStretch()
 
@@ -778,7 +787,7 @@ class StringGUI(QtWidgets.QWidget):
         self.but_feed_pound = self._toggle_button_common_a(vpar,"Delta calibrate", lambda v: self._set_delta_calibr(v))
 
         #self.but_feed_pound = self._toggle_button_common_a(vpar,"Включить лазер", lambda v: self._set_pwm_fan(1,7,255*v))
-        self.but_feed_pound = self._toggle_button_common_a(vpar,"Обновить лазер", lambda v: self._reload_laser_vals(v))
+        #self.but_feed_pound = self._toggle_button_common_a(vpar,"Обновить лазер", lambda v: self._reload_laser_vals(v))
 
         self._add_slider_na(vpar,"Освещение","",0,255,0, lambda v: self._set_pwm_fan(2,1,v))
         self._add_slider_na(vpar,"Вентилятор ламинара","",0,255,0, lambda v: self._set_pwm_fan(1,2,v))
@@ -811,6 +820,22 @@ class StringGUI(QtWidgets.QWidget):
         #self.start_code()
 
     #------------PROG FUNC-----------------------------------------
+
+    def _set_coord_type(self, val):
+        #if val:
+            self._send_gcode(StringMashType.primary,f"main M541 {int(val)}")
+            self.autocalibr = val
+
+    def _set_table_out(self, val):
+        #if val:
+            self._send_gcode(StringMashType.primary,f"main M542 {int(val)}")
+            self.table_out = val
+
+    def _set_cover_up(self, val):
+        #if val:
+            self._send_gcode(StringMashType.primary,f"main M543 {int(val)}")
+            self.cover_up = val
+
     def _reload_laser_vals(self, val):
         if val:
             self._send_gcode(StringMashType.primary,f"num1 M589 D")
@@ -985,6 +1010,9 @@ class StringGUI(QtWidgets.QWidget):
 
     def _start_prog(self, val,textbox):
         if val:            
+            self._set_coord_type(self.autocalibr)
+            self._set_table_out(self.table_out)
+            self._set_cover_up(self.cover_up)
             self._send_gcode(StringMashType.primary,f"main M598 0")
 
             text_code = textbox.toPlainText()
