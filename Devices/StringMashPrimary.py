@@ -27,6 +27,8 @@ class StringStatePrimary(object):
     temp_cur:float = 0.0
     prog_done:int = 0
 
+
+
     tool_recogn:str = "0"
 
     tools:str = "0"
@@ -44,7 +46,7 @@ class StringStatePrimary(object):
     y_current:float = 0.0
     z_current:float = 0.0
 
-
+    cur_coord_sys =" 0"
 
     board_num:int = 0
 
@@ -62,11 +64,11 @@ class StringStatePrimary(object):
         data = data.replace('  ',' ')
         data = data.split("s")[1]
 
+        board_num_st:int = int(data[1])
+        self.board_num:int = copy.deepcopy(board_num_st) 
+        
 
-        self.board_num:int = int(data[1])
-        #print(self.board_num)
-
-        data = data.replace('t'+str(self.board_num),'')
+        data = data.replace('t'+str( board_num_st),'')
         data = data.replace('  ',' ')
         data = data.replace('  ',' ')
         data = data.strip()
@@ -74,6 +76,8 @@ class StringStatePrimary(object):
         values = data.split(" ")
         if state is not None:
             self.clone(state)
+
+        #print(board_num_st)
         #print(values)
         if len(values) > 14: 
 
@@ -95,7 +99,7 @@ class StringStatePrimary(object):
                     for i in range(8):
                         self.cur_pos[i] = int(values[4+i]) 
 
-                    if len(values) > 21: 
+                    if len(values) > 22 and board_num_st==1: 
                         self.tools = values[12]
 
                         self.x_current = float(values[13])
@@ -109,8 +113,9 @@ class StringStatePrimary(object):
                         self.x_tool = float(values[19])
                         self.y_tool = float(values[20])
 
-                        if(len(values[21])>1):
-                            self.z_tool = float(values[21])
+                        #if(len(values[21])>1):
+                        self.z_tool = float(values[21])
+                        self.cur_coord_sys = values[22]
 
 
                     #if len(values[15])>2:
@@ -173,11 +178,13 @@ class StringStatePrimary(object):
         self.y_tool:float = state.y_tool
         self.z_tool:float = state.z_tool
 
-        self.x_mash:float = state.x_tool
-        self.y_mash:float = state.y_tool
-        self.z_mash:float = state.z_tool
+        self.x_mash:float = state.x_mash
+        self.y_mash:float = state.y_mash
+        self.z_mash:float = state.z_mash
 
-        self.board_num:float = state.board_num
+        self.cur_coord_sys = state.cur_coord_sys
+
+        self.board_num:int = copy.deepcopy(state.board_num)
 
         pass
 
@@ -187,6 +194,7 @@ class StringStatePrimary(object):
                 "\ndelta_calib: "+str(self.delta_calib)+"\nring_buf_go: "+str(self.ring_buf_go)+"\nhoming_done: "+str(self.homing_done)+"\ntemp: "+str(round(self.temp_cur,2))+"\n "+"\nprog_done: "+str(self.prog_done)+"\n "+\
                 "\ntools: "+str(self.tool_recogn)
         outp += "\n"
+
         outp += "\npos_current:"
         outp +="\nx: "+str(round( self.x_current,1))+"\ny: "+str(round( self.y_current,1))+"\nz: "+str(round( self.z_current,1))
         outp += "\n"
@@ -196,6 +204,12 @@ class StringStatePrimary(object):
         outp += "\npos_tool:"
         outp +="\nx: "+str(round( self.x_tool,1))+"\ny: "+str(round( self.y_tool,1))+"\nz: "+str(round( self.z_tool,1))
         outp += "\n"
+
+        outp += "coord_sys: "+self.cur_coord_sys
+
+
+        outp += "\n"
+
         if len(self.tools) == 5:
             outp += "\n"+"tool_manip_left: "+self.tools[0]
             outp += "\n"+"tool_manip_right : "+self.tools[1]

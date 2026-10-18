@@ -823,17 +823,17 @@ class StringGUI(QtWidgets.QWidget):
 
     def _set_coord_type(self, val):
         #if val:
-            self._send_gcode(StringMashType.primary,f"main M541 {int(val)}")
+            self._send_gcode(StringMashType.primary,f"main M641 {int(val)}")
             self.autocalibr = val
 
     def _set_table_out(self, val):
         #if val:
-            self._send_gcode(StringMashType.primary,f"main M542 {int(val)}")
+            self._send_gcode(StringMashType.primary,f"main M642 {int(val)}")
             self.table_out = val
 
     def _set_cover_up(self, val):
         #if val:
-            self._send_gcode(StringMashType.primary,f"main M543 {int(val)}")
+            self._send_gcode(StringMashType.primary,f"main M643 {int(val)}")
             self.cover_up = val
 
     def _reload_laser_vals(self, val):
